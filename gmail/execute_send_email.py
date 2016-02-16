@@ -10,6 +10,11 @@ from oauth2client import tools
 #import functions from other python files
 import send_email as mail
 
+############# NOTE: ###############
+# If originally created gmail api access on another computer,
+# need to add the argument --noauth_local_webserver to the python file
+# after setting credentials.invalid equal
+
 try:
     import argparse
     flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()

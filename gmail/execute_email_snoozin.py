@@ -18,11 +18,21 @@ import read_email as mail
 # after setting credentials.invalid equal
 
 
+
 try:
     import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+    flags = argparse.ArgumentParser(parents=[tools.argparser])#parse_args() <-- I changed this...change back if things are getting weird
+    subparsers = flags.add_subparsers(help='types poll_mode')
+    poll_parser = subparsers.add_parser("poll")
+    poll_parser.add_argument('-m', '--mode', dest='poll_mode', required=True,
+                        help='Parse the polling mode')
+    args = vars(flags.parse_args())
+    poll_mode = args['poll_mode']
 except ImportError:
     flags = None
+
+# Set up subparser for polling type
+
 
 SCOPES = 'https://www.googleapis.com/auth/gmail.modify'
 CLIENT_SECRET_FILE = 'client_secret_alarm_control.json'
@@ -161,9 +171,18 @@ def poll_for_heater_requests():
     # overwrite whatever was in the buffer before with new heater state request
     with open("/home/pi/Desktop/gmail_alarm/heater_state_buffer", "w") as myFile:
       myFile.write(messageBody)
+      
 def main():
-    poll_for_heater_requests()
-    
+
+    if poll_mode == "AddUrls":
+        poll_for_urls()
+    elif poll_mode == "HeaterRequest":
+        poll_for_heater_requests()
+    else:
+        print("\nUnrecognized polling mode...\n")
+        input()
+
+
 if __name__ == '__main__':
     main()
 

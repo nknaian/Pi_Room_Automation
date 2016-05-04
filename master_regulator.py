@@ -1,0 +1,277 @@
+#!python3
+#How I got this setup...
+'''
+Open command prompt.
+Once loaded type sudo idle3 & and press enter on the keyboard. 
+This will load the Python 3 programming environment called IDLE3 as the
+super user which allows you to create a program that affects the GPIO pins.
+Once loaded click on file and new window.
+'''
+
+import RPi.GPIO as GPIO
+import datetime
+import subprocess
+import time
+import webbrowser
+from selenium import webdriver
+import random
+import argparse
+import os
+import signal
+
+# local imports
+from alarm_funcs import ATime, get_all_alarm_times, pick_random_url_from_file, play_youtube_video, monitor_alarm_and_place_used_url, change_alarm_manual
+
+'''
+............... SETUP ................
+'''
+
+
+#Make sure the GPIO pins are ready
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+temp_sense = 12
+heater_off = 5
+heater_on = 4
+alarm_time_up = 13
+alarm_time_down = 26
+I_am_here_pin = 6
+
+GPIO.setup(temp_sense, GPIO.IN)
+GPIO.setup(I_am_here_pin, GPIO.IN)
+GPIO.setup(heater_off, GPIO.OUT)
+GPIO.setup(heater_on, GPIO.OUT)
+GPIO.setup(alarm_time_up, GPIO.IN)
+GPIO.setup(alarm_time_down, GPIO.IN)
+
+'''
+...............SANITY CHECKS................
+'''
+
+
+if GPIO.input(temp_sense):
+    print("\nTemp above 63 degrees Fahrenheit")
+else:
+    print("\nTemp below 63 degress Fahrenheit")
+
+
+
+'''
+...............HELPER FUNCTIONS................
+'''
+
+
+
+#Define functions turn heater on and turn heater off
+def turn_heater_on():
+    GPIO.output(heater_on, 1)
+    time.sleep(1)
+    GPIO.output(heater_on, 0)
+    time.sleep(1)
+
+def turn_heater_off():
+    GPIO.output(heater_off, 1)
+    time.sleep(1)
+    GPIO.output(heater_off, 0)
+    time.sleep(1)
+
+def Update_heater_state(is_heater_on, current_time):
+    if ( not GPIO.input(temp_sense) ) and ( not is_heater_on ):
+        turn_heater_on()
+        is_heater_on = True
+        message = "\nTurned heater on! (At " + current_time + ")"
+        print(message)
+    elif ( GPIO.input(temp_sense) ) and ( is_heater_on ):
+        turn_heater_off()
+        is_heater_on = False
+        message = "\nTurned heater off! (At " + current_time + ")"
+        print(message)
+    return is_heater_on
+
+
+def print_num_to_out(num):
+    str_num = str(num)
+    with open("/home/pi/Desktop/out", "w") as f:
+        f.write(str_num)
+    
+
+'''
+...............CONTROL FUNCTIONS................
+'''
+
+
+#If clock is in wrong time zone...use this: sudo dpkg-reconfigure tzdata
+def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
+    print_num_to_out(1) # testing...
+    now = datetime.datetime.now()
+    current_time = ATime(now.strftime("%H:%M"))
+    while heater_off_time.GreaterThan(current_time):
+        print_num_to_out(2) # testing...
+        #Get current time
+        now = datetime.datetime.now()
+        current_time = ATime(now.strftime("%H:%M"))
+        
+        #If it is alarm time, play alarm
+        if current_time.TimeString == alarm_time.TimeString:
+            print_num_to_out(3) # testing...
+            url = pick_random_url_from_file()
+            print_num_to_out(4) # testing...
+            play_youtube_video(url)
+            monitor_alarm_and_place_used_url(url)
+            
+        is_heater_on = Update_heater_state(is_heater_on, current_time.TimeString)
+               
+        time.sleep(45)
+        
+    if is_heater_on:
+        turn_heater_off()
+        is_heater_on = False
+        print("\nHeater turned off due to end of interval") 
+
+
+def master_regulator():
+    # constants:
+    min_increment = 5
+    hour_increment = 1
+    
+    # initial states
+    alarm_time = ATime("08:00")
+    I_am_here = True
+    is_heater_on = False
+    remote_heater_request = False
+    heater_on_remotely = False
+    heater_off_remotely = False
+
+    turn_heater_off() #in case heater was left on after program terminated
+    time.sleep(1)
+
+    #Testing alarm_func: (comment out block during normal operation)
+    '''
+    now = datetime.datetime.now()
+    current_time = ATime(now.strftime("%H:%M"))
+    heater_time = ATime(current_time.TimeString)
+    alarm_time = ATime(heater_time.TimeString, "add", 1, "min")
+    heater_off_time = ATime(alarm_time.TimeString, "add", 5, "min")
+    alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on)
+    '''#end alarm_func testing
+
+    #Derive other alarm times
+    heater_time, heater_off_time = get_all_alarm_times(alarm_time)
+    
+    print ("\nAlarm is set for", alarm_time.TimeString)
+    print ("Heater will turn on at", heater_time.TimeString)
+    print ("Heater will turn off at", heater_off_time.TimeString)
+    
+    while True:
+
+        ###### Input and alarm time checks (Every minute) ######
+
+            
+        #Get current time
+        now = datetime.datetime.now()
+        current_time = ATime(now.strftime("%H:%M"))
+
+        print_num_to_out(0) # testing...
+        
+        #Decide whether it is alarm time and what to do with heater
+        one_min_late = ATime(alarm_time.TimeString, "add", 1, "min")
+        if current_time.TimeString == heater_time.TimeString or current_time.TimeString == one_min_late.TimeString :
+            alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on)
+            is_heater_on = False
+        elif remote_heater_request:
+            if heater_on_remotely and not is_heater_on:
+                turn_heater_on()
+                is_heater_on = True
+                print("\nHeater turned on per remote request\n")
+            elif heater_off_remotely and is_heater_on:
+                turn_heater_off()
+                is_heater_on = False
+                heater_off_remotely = False
+                heater_on_remotely = False
+                print("\nHeater turned off per remote request\n")
+            else:
+                print("\nHeater already in this state!\n")
+            remote_heater_request = False   # The request has been fufilled 
+            
+        elif I_am_here or heater_on_remotely:
+            is_heater_on = Update_heater_state(is_heater_on, current_time.TimeString)
+            if not is_heater_on and heater_on_remotely: # Once heater is turned off after a remote request,
+                heater_on_remotely = False              # keep it off (unless someone is here)
+                # send emali to user saying that room is now warm
+        elif not I_am_here and is_heater_on:
+            turn_heater_off()
+            is_heater_on = False
+            print("\nHeater turned off because I am not here")
+
+        #Check for new urls from gmail
+        subprocess.Popen("python2 /home/pi/Desktop/gmail_alarm/execute_email_snoozin.py", shell=True)
+        time.sleep(5)
+        with open("/home/pi/Desktop/gmail_alarm/heater_state_buffer", "r") as f_read:
+            text_state = f_read.readlines()
+            if text_state == ['On\n']:
+                remote_heater_request = True
+                heater_on_remotely = True
+                with open("/home/pi/Desktop/gmail_alarm/heater_state_buffer", "w") as f_write:
+                    f_write.write("")
+            elif text_state == ['Off\n']:
+                remote_heater_request = True
+                heater_off_remotely = True
+                with open("/home/pi/Desktop/gmail_alarm/heater_state_buffer", "w") as f_write:
+                    f_write.write("")
+            else:
+                pass 
+            # Then you should send an email back to the sender with the
+            # result (can store text of email in the text buffer). Maybe give
+            # a prediction of how long it will take to get to get warm based
+            # on the mornings heat up time
+
+        
+
+        ####### Input checks (Every second) ######
+
+        
+        seconds_up_held = 0
+        seconds = 0
+        while seconds < 60:
+            #Get if alarm is being changed
+            if not GPIO.input(alarm_time_up):
+                seconds_up_held = seconds_up_held + 1
+                if seconds_up_held > 2:
+                    change_alarm_manual(alarm_time, alarm_time_up, alarm_time_down, hour_increment, minute_increment) 
+                    break
+            #Get whether I am here
+            elif (not GPIO.input(I_am_here_pin)) and heater_off_remotely == False:
+                I_am_here = True
+            elif  GPIO.input(I_am_here_pin)
+                I_am_here = False
+                heater_off_remotely = False # Now that user is here we can disregard the remote request
+            else:
+                seconds_up_held = 0
+            seconds = seconds + 1
+            time.sleep(1)
+
+        
+
+'''
+...............MAIN BLOCK................
+'''
+# Parse arguments
+parser = argparse.ArgumentParser(description='parse arges')
+parser.add_argument('-p', dest="process", 
+                    help='pass in the callers proccess id')
+
+args = parser.parse_args
+
+
+master_regulator()
+
+
+
+
+
+
+
+
+
+

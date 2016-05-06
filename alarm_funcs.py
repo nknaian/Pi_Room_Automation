@@ -194,7 +194,7 @@ def play_youtube_video(url):
     time.sleep(5)
     '''
 
-def monitor_alarm_and_place_used_url(url): # This function takes 5 min
+def monitor_alarm_and_place_used_url(url, alarm_time_up, alarm_time_down): # This function takes 5 min
     elapsed_alarm_time = 0
     while True:
         if elapsed_alarm_time > 300: # When mic circuit created use that instead of timing to figure if an alarm isn't being played
@@ -220,7 +220,7 @@ def monitor_alarm_and_place_used_url(url): # This function takes 5 min
         elapsed_alarm_time += 1
         time.sleep(1)
 
-def change_alarm_manual(alarm_time,alarm_time_up, alarm_time_down, hour_increment, minute_increment):
+def change_alarm_manual(alarm_time,alarm_time_up, alarm_time_down, hour_increment, min_increment):
     
     alarm_time_temp = ATime(alarm_time.TimeString) #create temp alarm time
     print ("\n~~~~~~~~~Alarm Time Changer~~~~~~~~~~~")
@@ -322,10 +322,5 @@ def change_alarm_manual(alarm_time,alarm_time_up, alarm_time_down, hour_incremen
     print ("  Changing alarm time...", end="\r")
     time.sleep(2)
     alarm_time = alarm_time_temp
-    heater_time, heater_off_time = get_all_alarm_times(alarm_time) #update other times
-    print("                                             ", end="\r")
-    print ("  Alarm is now set for", alarm_time.TimeString)
-    print ("  Heater will turn on at", heater_time.TimeString)
-    print ("  Heater will turn off at", heater_off_time.TimeString)
-    print ("\n~~~~~~~~~Alarm Time Changer End~~~~~~~\n")
-    return 1 #break out of 60 second while loop now that alarm has been changed
+    
+    return alarm_time #break out of 60 second while loop now that alarm has been changed

@@ -118,7 +118,7 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
             url = pick_random_url_from_file()
             print_num_to_out(4) # testing...
             play_youtube_video(url)
-            monitor_alarm_and_place_used_url(url)
+            monitor_alarm_and_place_used_url(url, alarm_time_up, alarm_time_down)
             
         is_heater_on = Update_heater_state(is_heater_on, current_time.TimeString)
                
@@ -142,6 +142,7 @@ def master_regulator():
     remote_heater_request = False
     heater_on_remotely = False
     heater_off_remotely = False
+    alarm_on = True
 
     turn_heater_off() #in case heater was left on after program terminated
     time.sleep(1)
@@ -159,7 +160,7 @@ def master_regulator():
     #Derive other alarm times
     heater_time, heater_off_time = get_all_alarm_times(alarm_time)
     
-    print ("\nAlarm is set for", alarm_time.TimeString)
+    print ("\nAlarm is set 4", alarm_time.TimeString)
     print ("Heater will turn on at", heater_time.TimeString)
     print ("Heater will turn off at", heater_off_time.TimeString)
     
@@ -176,7 +177,7 @@ def master_regulator():
         
         #Decide whether it is alarm time and what to do with heater
         one_min_late = ATime(alarm_time.TimeString, "add", 1, "min")
-        if current_time.TimeString == heater_time.TimeString or current_time.TimeString == one_min_late.TimeString :
+        if (current_time.TimeString == heater_time.TimeString or current_time.TimeString == one_min_late.TimeString) and alarm_on :
             alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on)
             is_heater_on = False
         elif remote_heater_request:
@@ -205,19 +206,43 @@ def master_regulator():
             print("\nHeater turned off because I am not here")
 
         #Check for new urls from gmail
-        subprocess.Popen("python2 /home/pi/Desktop/gmail_alarm/execute_email_snoozin.py", shell=True)
-        time.sleep(5)
-        with open("/home/pi/Desktop/gmail_alarm/heater_state_buffer", "r") as f_read:
+        subprocess.Popen("python2 /home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py poll -m AddUrls", shell=True)
+        time.sleep(1)
+
+        #Check for new alarm requests from gmail
+        subprocess.Popen("python2 /home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py poll -m AlarmRequest", shell=True)
+        time.sleep(3)
+        with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/alarm_state_buffer", "r") as f_read:
+            text_state = f_read.readlines()
+            if text_state == ['On\n']:
+                alarm_on = True
+                print("Alarm turned on per remote request")
+                with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/alarm_state_buffer", "w") as f_write:
+                    f_write.write("")
+            elif text_state == ['Off\n']:
+                alarm_on = False
+                print("Alarm turned off per remote request")
+                with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/alarm_state_buffer", "w") as f_write:
+                    f_write.write("")
+            else:
+                pass 
+            # Then you should send an email back to the sender with the
+            # result (can store text of email in the text buffer)
+
+        #Check for new heater requests from gmail
+        subprocess.Popen("python2 /home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py poll -m HeaterRequest", shell=True)
+        time.sleep(3)
+        with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/heater_state_buffer", "r") as f_read:
             text_state = f_read.readlines()
             if text_state == ['On\n']:
                 remote_heater_request = True
                 heater_on_remotely = True
-                with open("/home/pi/Desktop/gmail_alarm/heater_state_buffer", "w") as f_write:
+                with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/heater_state_buffer", "w") as f_write:
                     f_write.write("")
             elif text_state == ['Off\n']:
                 remote_heater_request = True
                 heater_off_remotely = True
-                with open("/home/pi/Desktop/gmail_alarm/heater_state_buffer", "w") as f_write:
+                with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/heater_state_buffer", "w") as f_write:
                     f_write.write("")
             else:
                 pass 
@@ -238,12 +263,22 @@ def master_regulator():
             if not GPIO.input(alarm_time_up):
                 seconds_up_held = seconds_up_held + 1
                 if seconds_up_held > 2:
-                    change_alarm_manual(alarm_time, alarm_time_up, alarm_time_down, hour_increment, minute_increment) 
+                    new_alarm_time = change_alarm_manual(alarm_time, alarm_time_up, alarm_time_down, hour_increment, min_increment)
+                    if new_alarm_time == 0: #Don't change alarm time if 0 was returned
+                        pass
+                    else:
+                        alarm_time = new_alarm_time
+                        heater_time, heater_off_time = get_all_alarm_times(alarm_time) #update other times
+                        print("                                             ", end="\r")
+                        print ("  Alarm is now set for", alarm_time.TimeString)
+                        print ("  Heater will turn on at", heater_time.TimeString)
+                        print ("  Heater will turn off at", heater_off_time.TimeString)
+                    print ("\n~~~~~~~~~Alarm Time Changer End~~~~~~~\n")
                     break
             #Get whether I am here
             elif (not GPIO.input(I_am_here_pin)) and heater_off_remotely == False:
                 I_am_here = True
-            elif  GPIO.input(I_am_here_pin)
+            elif  GPIO.input(I_am_here_pin):
                 I_am_here = False
                 heater_off_remotely = False # Now that user is here we can disregard the remote request
             else:

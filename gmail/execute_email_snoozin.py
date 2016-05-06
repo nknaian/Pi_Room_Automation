@@ -169,7 +169,40 @@ def poll_for_heater_requests():
         empty = True
 
     # overwrite whatever was in the buffer before with new heater state request
-    with open("/home/pi/Desktop/gmail_alarm/heater_state_buffer", "w") as myFile:
+    with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/heater_state_buffer", "w") as myFile: #Note: buffer must be in same folder as this file
+      myFile.write(messageBody)
+
+def poll_for_alarm_requests():
+    """Checks inbox for message with certain subject line, prints a snippet of the message
+
+    Creates a Gmail API service object and then querys for the latest of a specific email, gets
+    that email, then prints the list of urls found (only urls are detected)
+    """
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('gmail', 'v1', http=http)
+
+    # Search inbox for message we're looking for and create MimeMessage of object
+    query = 'subject:Alarm AND is:unread AND in:inbox'
+    messages_that_match = mail.ListMessagesMatchingQuery(service, "me", query)
+    if not messages_that_match:
+        exit(0) # No new messages...exiting with 0
+    our_message = messages_that_match[0] #We're only interested in the latest message
+    message = mail.GetMimeMessage(service, "me", our_message['id'])
+
+    # Mark message as read
+    msgLabel = { 'removeLabelIds': ['UNREAD'] }
+    service.users().messages().modify(userId="me", id=our_message['id'], body= msgLabel).execute()
+    
+    # Go through message and capture text of message body
+    for part in message.walk():
+        message.get_payload()
+        if part.get_content_type() == 'text/plain':
+            messageBody = part.get_payload()
+
+
+    # overwrite whatever was in the buffer before with new heater state request
+    with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/alarm_state_buffer", "w") as myFile: #Note: buffer must be in same folder as this file
       myFile.write(messageBody)
       
 def main():
@@ -178,6 +211,8 @@ def main():
         poll_for_urls()
     elif poll_mode == "HeaterRequest":
         poll_for_heater_requests()
+    elif poll_mode == "AlarmRequest":
+        poll_for_alarm_requests()
     else:
         print("\nUnrecognized polling mode...\n")
         input()

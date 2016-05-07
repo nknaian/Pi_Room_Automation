@@ -129,7 +129,7 @@ def main():
     if email_version == "GitPullRequest":
         send_git_pull_request()
     elif email_version == "SendErrorMessage":
-        
+        send_error_message()
     elif email_version == "Custom": #For this one user must go into this file and change the variables in send_custom()
         send_custom()
     else:

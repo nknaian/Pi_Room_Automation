@@ -288,8 +288,6 @@ def master_regulator():
                 I_am_here = False
                 heater_off_remotely = False # Now that user is here we can disregard the remote request
                 
-            #Check for a git pull request
-            subprocess.Popen("python2 /home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py poll -m GitPullRequest", shell=True)
             seconds = seconds + 1
             time.sleep(1)
 

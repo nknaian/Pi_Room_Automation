@@ -4,6 +4,8 @@ import os
 import base64
 from bs4 import BeautifulSoup
 import subprocess
+import time
+import shlex
 
 from apiclient import discovery
 import oauth2client
@@ -236,13 +238,16 @@ def poll_for_git_requests():
 
     # Decide action based on what kind of git request it is
     if messageBody == "Pull":
-        proc = subprocess.Popen("lxterminal -e cd /home/pi/Desktop/Git_repo/Pi_Room_Automation && git pull origin master", shell=True, preexec_fn=os.setsid)
+        git_pull_command = "git pull origin master"
+        git_pull_out = subprocess.check_output(shlex.split(git_pull_command), cwd="/home/pi/Desktop/Git_repo/Pi_Room_Automation" )
+        #print(git_pull_out)
+
+        out, err = subprocess.check_output(["python3", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/master_regulator.py"])
+        print("\nout = ", out)
+        print("\nerr = ", err)
     else:
         print("\nUnrecognized GitRequest...\n")
         input()
-    # overwrite whatever was in the buffer before with new heater state request
-    with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/alarm_state_buffer", "w") as myFile: #Note: buffer must be in same folder as this file
-      myFile.write(messageBody)
       
 def main():
 

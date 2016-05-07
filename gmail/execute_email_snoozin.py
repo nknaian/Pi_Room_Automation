@@ -235,7 +235,7 @@ def poll_for_git_requests():
             messageBody = part.get_payload()
 
     # Decide action based on what kind of git request it is
-    if messageBoday == "Pull":
+    if messageBody == "Pull":
         proc = subprocess.Popen("lxterminal -e cd /home/pi/Desktop/Git_repo/Pi_Room_Automation && git pull origin master", shell=True, preexec_fn=os.setsid)
     else:
         print("\nUnrecognized GitRequest...\n")

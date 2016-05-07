@@ -160,7 +160,7 @@ def master_regulator():
     #Derive other alarm times
     heater_time, heater_off_time = get_all_alarm_times(alarm_time)
     
-    print ("\nAlarm is set 3", alarm_time.TimeString)
+    print ("\nAlarm is set 4", alarm_time.TimeString)
     print ("Heater will turn on at", heater_time.TimeString)
     print ("Heater will turn off at", heater_off_time.TimeString)
     
@@ -275,14 +275,18 @@ def master_regulator():
                         print ("  Heater will turn off at", heater_off_time.TimeString)
                         print ("\n~~~~~~~~~Alarm Time Changer End~~~~~~~\n")
                     break
+            else:
+                seconds_up_held = 0
+                
             #Get whether I am here
-            elif (not GPIO.input(I_am_here_pin)) and heater_off_remotely == False:
+            if (not GPIO.input(I_am_here_pin)) and heater_off_remotely == False:
                 I_am_here = True
             elif  GPIO.input(I_am_here_pin):
                 I_am_here = False
                 heater_off_remotely = False # Now that user is here we can disregard the remote request
-            else:
-                seconds_up_held = 0
+                
+            #Check for a git pull request
+            subprocess.Popen("python2 /home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py poll -m GitPullRequest", shell=True)
             seconds = seconds + 1
             time.sleep(1)
 

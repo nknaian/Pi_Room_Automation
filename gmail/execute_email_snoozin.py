@@ -236,6 +236,7 @@ def poll_for_git_requests():
 
     # Decide action based on what kind of git request it is
     if messageBoday == "Pull":
+        proc = subprocess.Popen("lxterminal -e cd /home/pi/Desktop/Git_repo/Pi_Room_Automation && git pull origin master", shell=True, preexec_fn=os.setsid)
     else:
         print("\nUnrecognized GitRequest...\n")
         input()
@@ -251,6 +252,8 @@ def main():
         poll_for_heater_requests()
     elif poll_mode == "AlarmRequest":
         poll_for_alarm_requests()
+    elif poll_mode == "GitPullRequest":
+        poll_for_git_requests()
     else:
         print("\nUnrecognized polling mode...\n")
         input()

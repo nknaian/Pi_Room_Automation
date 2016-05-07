@@ -93,7 +93,7 @@ def Update_heater_state(is_heater_on, current_time):
     return is_heater_on
 
 
-def print_num_to_out(num):
+def print_num_to_out(num)
     str_num = str(num)
     with open("/home/pi/Desktop/out", "w") as f:
         f.write(str_num)

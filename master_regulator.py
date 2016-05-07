@@ -273,7 +273,7 @@ def master_regulator():
                         print ("  Alarm is now set for", alarm_time.TimeString)
                         print ("  Heater will turn on at", heater_time.TimeString)
                         print ("  Heater will turn off at", heater_off_time.TimeString)
-			print ("\n~~~~~~~~~Alarm Time Changer End~~~~~~~\n")
+                        print ("\n~~~~~~~~~Alarm Time Changer End~~~~~~~\n")
                     break
             #Get whether I am here
             elif (not GPIO.input(I_am_here_pin)) and heater_off_remotely == False:

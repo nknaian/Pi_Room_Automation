@@ -69,8 +69,8 @@ def main():
    
     sender = "snoozinforabruisin@gmail.com"
     to = "snoozinforabruisin@gmail.com"
-    subject = "AddUrls"
-    message_text = "https://www.youtube.com/watch?v=E8b4xYbEugo"
+    subject = "GitRequest"
+    message_text = "Pull"
     filedir = ""
     filename = ""
 

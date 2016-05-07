@@ -160,7 +160,7 @@ def master_regulator():
     #Derive other alarm times
     heater_time, heater_off_time = get_all_alarm_times(alarm_time)
     
-    print ("\nAlarm is set 4", alarm_time.TimeString)
+    print ("\nAlarm is set 3", alarm_time.TimeString)
     print ("Heater will turn on at", heater_time.TimeString)
     print ("Heater will turn off at", heater_off_time.TimeString)
     

@@ -8,6 +8,9 @@ super user which allows you to create a program that affects the GPIO pins.
 Once loaded click on file and new window.
 '''
 
+#NOTE: This script is only meant to be run on my raspberry pi to function with
+#      the GPIO setup it has.
+
 import RPi.GPIO as GPIO
 import datetime
 import subprocess

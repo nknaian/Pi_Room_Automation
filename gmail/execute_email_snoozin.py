@@ -3,6 +3,7 @@ import httplib2
 import os
 import base64
 from bs4 import BeautifulSoup
+import subprocess
 
 from apiclient import discovery
 import oauth2client
@@ -201,6 +202,43 @@ def poll_for_alarm_requests():
             messageBody = part.get_payload()
 
 
+    # overwrite whatever was in the buffer before with new heater state request
+    with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/alarm_state_buffer", "w") as myFile: #Note: buffer must be in same folder as this file
+      myFile.write(messageBody)
+
+def poll_for_git_requests():
+    """Checks inbox for message with certain subject line, prints a snippet of the message
+
+    Creates a Gmail API service object and then querys for the latest of a specific email, gets
+    that email, then prints the list of urls found (only urls are detected)
+    """
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('gmail', 'v1', http=http)
+
+    # Search inbox for message we're looking for and create MimeMessage of object
+    query = 'subject:GitRequest AND is:unread AND in:inbox'
+    messages_that_match = mail.ListMessagesMatchingQuery(service, "me", query)
+    if not messages_that_match:
+        exit(0) # No new messages...exiting with 0
+    our_message = messages_that_match[0] #We're only interested in the latest message
+    message = mail.GetMimeMessage(service, "me", our_message['id'])
+
+    # Mark message as read
+    msgLabel = { 'removeLabelIds': ['UNREAD'] }
+    service.users().messages().modify(userId="me", id=our_message['id'], body= msgLabel).execute()
+    
+    # Go through message and capture text of message body
+    for part in message.walk():
+        message.get_payload()
+        if part.get_content_type() == 'text/plain':
+            messageBody = part.get_payload()
+
+    # Decide action based on what kind of git request it is
+    if messageBoday == "Pull":
+    else:
+        print("\nUnrecognized GitRequest...\n")
+        input()
     # overwrite whatever was in the buffer before with new heater state request
     with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/alarm_state_buffer", "w") as myFile: #Note: buffer must be in same folder as this file
       myFile.write(messageBody)

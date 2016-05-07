@@ -17,7 +17,13 @@ import send_email as mail
 
 try:
     import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+    flags = argparse.ArgumentParser(parents=[tools.argparser])#parse_args() <-- I changed this...change back if things are getting weird
+    subparsers = flags.add_subparsers(help='prewritten emails to send')
+    email_parser = subparsers.add_parser("email")
+    email_parser.add_argument('-v', '--version', dest='email_version', required=True,
+                        help='Parse the email version')
+    args = vars(flags.parse_args())
+    email_version = args['email_version']
 except ImportError:
     flags = None
 
@@ -57,7 +63,7 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
-def main():
+def send_git_pull_request():
     """Sends an email with an attachment
 
     Creates a Gmail API service object and then creates an email and sends that email
@@ -71,6 +77,24 @@ def main():
     to = "snoozinforabruisin@gmail.com"
     subject = "GitRequest"
     message_text = "Pull"
+    
+    message = mail.CreateMessage(sender, to, subject, message_text)
+    mail.SendMessage(service, "me", message)
+
+def send_custom():
+    """Sends an email with an attachment
+
+    Creates a Gmail API service object and then creates an email and sends that email
+    """
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('gmail', 'v1', http=http)
+
+   
+    sender = "snoozinforabruisin@gmail.com"
+    to = "snoozinforabruisin@gmail.com"
+    subject = "Custom Subject"
+    message_text = "custom text"
     filedir = ""
     filename = ""
 
@@ -79,6 +103,14 @@ def main():
     else:
         message = mail.CreateMessageWithAttachment(sender, to, subject, message_text, filedir, filename)
     mail.SendMessage(service, "me", message)
-    
+
+def main():
+    if email_version == "GitPullRequest":
+        send_git_pull_request()
+    elif email_version == "Custom": #For this one user must go into this file and change the variables in send_custom()
+        send_custom()
+    else:
+        print("\nUnrecognized email version...\n")
+        input()
 if __name__ == '__main__':
     main()

@@ -1,0 +1,4 @@
+  File "/home/pi/Desktop/Git_repo/Pi_Room_Automation/master_regulator.py", line 96
+    def print_num_to_out(num)
+                            ^
+SyntaxError: invalid syntax

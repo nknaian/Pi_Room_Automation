@@ -240,11 +240,11 @@ def poll_for_git_requests():
     if messageBody == "Pull":
         git_pull_command = "git pull origin master"
         git_pull_out = subprocess.check_output(shlex.split(git_pull_command), cwd="/home/pi/Desktop/Git_repo/Pi_Room_Automation" )
-        #print(git_pull_out)
-
-        out, err = subprocess.check_output(["python3", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/master_regulator.py"])
-        print("\nout = ", out)
-        print("\nerr = ", err)
+        
+        proc = subprocess.Popen(["python3", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/master_regulator.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+        out, err = proc.communicate()
+        with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/error_out.txt", "w") as myFile:
+          myFile.write(err)
     else:
         print("\nUnrecognized GitRequest...\n")
         input()

@@ -22,8 +22,11 @@ try:
     email_parser = subparsers.add_parser("email")
     email_parser.add_argument('-v', '--version', dest='email_version', required=True,
                         help='Parse the email version')
+    email_parser.add_argument('-b', '--body', dest='message_body', required=False,
+                        help='argument to pass in message body')
     args = vars(flags.parse_args())
     email_version = args['email_version']
+    message_body = args['message_body']
 except ImportError:
     flags = None
 
@@ -64,7 +67,7 @@ def get_credentials():
     return credentials
 
 def send_git_pull_request():
-    """Sends an email with an attachment
+    """Sends an email 
 
     Creates a Gmail API service object and then creates an email and sends that email
     """
@@ -77,6 +80,24 @@ def send_git_pull_request():
     to = "snoozinforabruisin@gmail.com"
     subject = "GitRequest"
     message_text = "Pull"
+    
+    message = mail.CreateMessage(sender, to, subject, message_text)
+    mail.SendMessage(service, "me", message)
+
+def send_error_message():
+    """Sends an email
+
+    Creates a Gmail API service object and then creates an email and sends that email
+    """
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('gmail', 'v1', http=http)
+
+   
+    sender = "snoozinforabruisin@gmail.com"
+    to = "snoozinforabruisin@gmail.com"
+    subject = "Running master_regulator failed after changes!"
+    message_text = "Attempted running returned the following error message:\n\n" + message_body
     
     message = mail.CreateMessage(sender, to, subject, message_text)
     mail.SendMessage(service, "me", message)
@@ -107,6 +128,8 @@ def send_custom():
 def main():
     if email_version == "GitPullRequest":
         send_git_pull_request()
+    elif email_version == "SendErrorMessage":
+        
     elif email_version == "Custom": #For this one user must go into this file and change the variables in send_custom()
         send_custom()
     else:

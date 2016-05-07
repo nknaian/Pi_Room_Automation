@@ -243,8 +243,7 @@ def poll_for_git_requests():
         
         proc = subprocess.Popen(["python3", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/master_regulator.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
         out, err = proc.communicate()
-        send_command = "python2 /home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py email -v SendErrorMessage -b " + err
-        subprocess.check_output(shlex.split(send_command))
+        subprocess.check_output(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendErrorMessage", "-b", err])
         with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/error_out.txt", "w") as myFile:
           myFile.write(err)
     else:

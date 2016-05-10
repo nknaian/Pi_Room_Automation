@@ -96,8 +96,8 @@ def send_error_message():
    
     sender = "snoozinforabruisin@gmail.com"
     to = "snoozinforabruisin@gmail.com"
-    subject = "Running master_regulator failed after changes!"
-    message_text = "Attempted running returned the following error message:\n\n" + message_body
+    subject = "master_regulator failed after changes!"
+    message_text = "Received Error Message:\n\n" + message_body
     
     message = mail.CreateMessage(sender, to, subject, message_text)
     mail.SendMessage(service, "me", message)

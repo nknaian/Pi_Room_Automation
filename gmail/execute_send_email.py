@@ -96,12 +96,30 @@ def send_error_message():
    
     sender = "snoozinforabruisin@gmail.com"
     to = "snoozinforabruisin@gmail.com"
-    subject = "master_regulator failed after changes!"
+    subject = "Failure!"
     message_text = "Received Error Message:\n\n" + message_body
     
     message = mail.CreateMessage(sender, to, subject, message_text)
     mail.SendMessage(service, "me", message)
 
+def send_success_message():
+    """Sends an email
+
+    Creates a Gmail API service object and then creates an email and sends that email
+    """
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('gmail', 'v1', http=http)
+
+   
+    sender = "snoozinforabruisin@gmail.com"
+    to = "snoozinforabruisin@gmail.com"
+    subject = "Success!"
+    message_text = ""
+    
+    message = mail.CreateMessage(sender, to, subject, message_text)
+    mail.SendMessage(service, "me", message)
+    
 def send_custom():
     """Sends an email with an attachment
 
@@ -130,6 +148,7 @@ def main():
         send_git_pull_request()
     elif email_version == "SendErrorMessage":
         send_error_message()
+    elif email_version == "SendSuccessMessage":
     elif email_version == "Custom": #For this one user must go into this file and change the variables in send_custom()
         send_custom()
     else:

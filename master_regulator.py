@@ -7,7 +7,7 @@ This will load the Python 3 programming environment called IDLE3 as the
 super user which allows you to create a program that affects the GPIO pins.
 Once loaded click on file and new window.
 '''
-
+#testing
 #NOTE: This script is only meant to be run on my raspberry pi to function with
 #      the GPIO setup it has
 

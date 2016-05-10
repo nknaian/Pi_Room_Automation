@@ -246,10 +246,12 @@ def poll_for_git_requests():
         err = ""
         if err!= "":
             subprocess.check_output(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendErrorMessage", "-b", err])
+            with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/error_out.txt", "w") as myFile:
+                myFile.write("loop 1")
         else:
             subprocess.check_output(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendSuccessMessage"])
-        with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/error_out.txt", "w") as myFile:
-          myFile.write(err)
+            with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/error_out.txt", "w") as myFile:
+                myFile.write("loop 2")
     else:
         print("\nUnrecognized GitRequest...\n")
         input()

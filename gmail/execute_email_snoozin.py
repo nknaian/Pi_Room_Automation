@@ -78,7 +78,7 @@ def FilterMessageBody(messageBody, videoList):
     for char in messageBody:
         if (char == "\r") or (char == '\t') or (char == '\n'):
             if (tempVideo[:7] == "http://") or (tempVideo[:8] == "https://"):
-                videoList.append(tempVideo)
+                videoList.append(3)#change back to tempVideo
             tempVideo = ""
 
         else:

@@ -73,7 +73,7 @@ try:
             script_running = False
             
         elif (proc2.poll() is None) and script_running:
-            output= proc2.stdout.read()
+            output= proc2.stdout.readline()
             writeToTextpad(proc1_3, output, "a")
         
         else:

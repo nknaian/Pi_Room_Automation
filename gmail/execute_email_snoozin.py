@@ -239,7 +239,7 @@ def poll_for_git_requests():
     # Decide action based on what kind of git request it is
     if messageBody == "Pull":
         git_pull_command = "git pull origin master"
-        #git_pull_out = subprocess.check_output(shlex.split(git_pull_command), cwd="/home/pi/Desktop/Git_repo/Pi_Room_Automation" ) #temporarily commenting out so we don't overwrite current work
+        git_pull_out = subprocess.check_output(shlex.split(git_pull_command), cwd="/home/pi/Desktop/Git_repo/Pi_Room_Automation" ) 
         
       
     else:

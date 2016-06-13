@@ -92,7 +92,6 @@ def send_error_message():
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('gmail', 'v1', http=http)
-
    
     sender = "snoozinforabruisin@gmail.com"
     to = "snoozinforabruisin@gmail.com"

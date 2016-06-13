@@ -23,7 +23,7 @@ import os
 import signal
 
 # local imports
-from alarm_funcs import ATime, get_all_alarm_times, pick_random_url_from_file, play_youtube_video, monitor_alarm_and_place_used_url, change_alarm_manual
+from alarm_funcs import ATime, get_all_alarm_times, pick_random_url_from_file, play_youtube_video, run_script_and_monitor, monitor_alarm_and_place_used_url, change_alarm_manual
 
 '''
 ............... SETUP ................
@@ -146,6 +146,7 @@ def master_regulator():
     heater_on_remotely = False
     heater_off_remotely = False
     alarm_on = True
+    sent_success = False
 
     turn_heater_off() #in case heater was left on after program terminated
     time.sleep(1)
@@ -166,6 +167,8 @@ def master_regulator():
     print ("\nAlarm is set 4", alarm_time.TimeString)
     print ("Heater will turn on at", heater_time.TimeString)
     print ("Heater will turn off at", heater_off_time.TimeString)
+
+    
     
     while True:
 
@@ -209,12 +212,12 @@ def master_regulator():
             print("\nHeater turned off because I am not here")
 
         #Check for new urls from gmail
-        subprocess.Popen("python2 /home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py poll -m AddUrls", shell=True)
-        time.sleep(1)
+        run_script_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py", "poll", "-m", "AddUrls"])
+       
 
         #Check for new alarm requests from gmail
-        subprocess.Popen("python2 /home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py poll -m AlarmRequest", shell=True)
-        time.sleep(3)
+        run_script_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py", "poll", "-m", "AlarmRequest"])
+        
         with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/alarm_state_buffer", "r") as f_read:
             text_state = f_read.readlines()
             if text_state == ['On\n']:
@@ -233,8 +236,8 @@ def master_regulator():
             # result (can store text of email in the text buffer)
 
         #Check for new heater requests from gmail
-        subprocess.Popen("python2 /home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py poll -m HeaterRequest", shell=True)
-        time.sleep(3)
+        run_script_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py", "poll", "-m", "HeaterRequest"])
+
         with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/heater_state_buffer", "r") as f_read:
             text_state = f_read.readlines()
             if text_state == ['On\n']:
@@ -254,7 +257,6 @@ def master_regulator():
             # a prediction of how long it will take to get to get warm based
             # on the mornings heat up time
 
-        
 
         ####### Input checks (Every second) ######
 
@@ -291,7 +293,6 @@ def master_regulator():
             seconds = seconds + 1
             time.sleep(1)
 
-        
 
 '''
 ...............MAIN BLOCK................

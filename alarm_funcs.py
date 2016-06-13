@@ -152,7 +152,7 @@ class ATime:
 '''
 
 def get_all_alarm_times(alarm_time):
-    heater_time = ATime(alarm_time.TimeString, "sub", 90, "min")
+    heater_time = ATime(alarm_time.TimeString, "sub", 1, "min")
     heater_off_time = ATime(alarm_time.TimeString, "add", 30, "min")               
     return heater_time, heater_off_time
 
@@ -193,6 +193,39 @@ def play_youtube_video(url):
     #subprocess.Popen("xdotool mousemove 1270 610 click 1", shell=True) #Click on full screen
     time.sleep(5)
     '''
+
+def run_send_email_and_monitor(scriptWithArgs):
+    proc = subprocess.Popen(scriptWithArgs, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    out, err = proc.communicate()
+    
+    #Print out the stdout from the script:
+    out_str = str(out)
+    out_str = out_str[2:-1]
+    print(out_str)
+
+    #If the script encountered an error, print error to leapfad (by using print statement)
+    err_str = str(err)
+    err_str = err_str[2:-1]
+    if (err_str != ""):
+        print("\nThe following error was encountered:\n" + err_str)
+        return -1
+    
+def run_script_and_monitor(scriptWithArgs): #This function takes the script with args as a list, just as it would be typed in terminal...use to relay standard error and output (will not work for execute_send_email)
+    proc = subprocess.Popen(scriptWithArgs, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    out, err = proc.communicate()
+    
+    #Print out the stdout from the script:
+    out_str = str(out)
+    out_str = out_str[2:-1]
+    #print(out_str) #for some reason this line is causing 3 new lines to appear once a minute, but they aren't in out_str...? so....something about the stdout pipe I guess?
+
+    #If the script encountered an error, send in email
+    err_str = str(err)
+    err_str = err_str[2:-1]
+    if (err_str != ""):
+        returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendErrorMessage", "-b", err_str])
+        if returnVal != -1:
+            print("\nAn error was encountered...check email for error message")
 
 def monitor_alarm_and_place_used_url(url, alarm_time_up, alarm_time_down): # This function takes 5 min
     elapsed_alarm_time = 0

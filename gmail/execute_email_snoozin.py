@@ -94,7 +94,6 @@ def poll_for_urls():
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('gmail', 'v1', http=http)
-
     # Search inbox for message we're looking for and create MimeMessage of object
     query = 'subject:AddUrls AND is:unread AND in:inbox'
     messages_that_match = mail.ListMessagesMatchingQuery(service, "me", query)
@@ -115,7 +114,7 @@ def poll_for_urls():
 
     # Filter message body into a list of the youtube videos (right now will put any http link in the list)
     videos = []
-    FilterMessageBody(messageBody, videos)
+    FilterMessageBody(messageBody, videos)#, garbage) remove garbage after test
 
     # Check if file is empty (for later use)
     empty = False
@@ -132,10 +131,11 @@ def poll_for_urls():
                 myFile.write("\n")
             myFile.write(link)
             iterator += 1
-
+    
     print("\nNew videos addded:\n")
     print(videos)
     print("\n")
+    
 
 def poll_for_heater_requests():
     """Checks inbox for message with certain subject line, prints a snippet of the message
@@ -239,19 +239,9 @@ def poll_for_git_requests():
     # Decide action based on what kind of git request it is
     if messageBody == "Pull":
         git_pull_command = "git pull origin master"
-        git_pull_out = subprocess.check_output(shlex.split(git_pull_command), cwd="/home/pi/Desktop/Git_repo/Pi_Room_Automation" )
+        #git_pull_out = subprocess.check_output(shlex.split(git_pull_command), cwd="/home/pi/Desktop/Git_repo/Pi_Room_Automation" ) #temporarily commenting out so we don't overwrite current work
         
-        proc = subprocess.Popen(["python3", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/master_regulator.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-        out, err = proc.communicate()
-        err = ""
-        if err!= "":
-            subprocess.check_output(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendErrorMessage", "-b", err])
-            with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/error_out.txt", "w") as myFile:
-                myFile.write("loop 1")
-        else:
-            subprocess.check_output(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendSuccessMessage"])
-            with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/error_out.txt", "w") as myFile:
-                myFile.write("loop 2")
+      
     else:
         print("\nUnrecognized GitRequest...\n")
         input()

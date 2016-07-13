@@ -17,7 +17,7 @@ import signal
 
 class ATime:
     #Initiation functions
-    
+
     def __init__(self, time_string, arith_type = None, value = None, time_type = None):
         if arith_type is not None:
             self.FromOtherTimeString(time_string, arith_type, value, time_type)
@@ -145,7 +145,7 @@ class ATime:
                 return False
         else:
             return False
-            
+
 
 '''
 ...............HELPER FUNCTIONS................
@@ -153,7 +153,7 @@ class ATime:
 
 def get_all_alarm_times(alarm_time):
     heater_time = ATime(alarm_time.TimeString, "sub", 1, "min")
-    heater_off_time = ATime(alarm_time.TimeString, "add", 30, "min")               
+    heater_off_time = ATime(alarm_time.TimeString, "add", 30, "min")
     return heater_time, heater_off_time
 
 def pick_random_url_from_file():
@@ -164,7 +164,7 @@ def pick_random_url_from_file():
     rand_url_index = random.randint(0, len(urls) - 1)
     url = urls[rand_url_index]
 
-    # Delete url from "Random_url" and move to "PlayedVideos" 
+    # Delete url from "Random_url" and move to "PlayedVideos"
     iterator = 0
     with open("/home/pi/Desktop/Random_urls", "w") as f_source:
         for i in range(0, len(urls)):
@@ -172,7 +172,7 @@ def pick_random_url_from_file():
                 pass
             else:
                 f_source.write(urls[i])
-    
+
     return url
 
 def play_youtube_video(url):
@@ -197,7 +197,7 @@ def play_youtube_video(url):
 def run_send_email_and_monitor(scriptWithArgs):
     proc = subprocess.Popen(scriptWithArgs, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     out, err = proc.communicate()
-    
+
     #Print out the stdout from the script:
     out_str = str(out)
     out_str = out_str[2:-1]
@@ -209,11 +209,11 @@ def run_send_email_and_monitor(scriptWithArgs):
     if (err_str != ""):
         print("\nThe following error was encountered:\n" + err_str)
         return -1
-    
+
 def run_script_and_monitor(scriptWithArgs): #This function takes the script with args as a list, just as it would be typed in terminal...use to relay standard error and output (will not work for execute_send_email)
     proc = subprocess.Popen(scriptWithArgs, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     out, err = proc.communicate()
-    
+
     #Print out the stdout from the script:
     out_str = str(out)
     out_str = out_str[2:-1]
@@ -223,7 +223,7 @@ def run_script_and_monitor(scriptWithArgs): #This function takes the script with
     err_str = str(err)
     err_str = err_str[2:-1]
     if (err_str != ""):
-        returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendErrorMessage", "-b", err_str])
+        returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendWarningMessage", "-b", err_str])
         if returnVal != -1:
             print("\nAn error was encountered...check email for error message")
 
@@ -240,7 +240,7 @@ def monitor_alarm_and_place_used_url(url, alarm_time_up, alarm_time_down): # Thi
             break
         elif not GPIO.input(alarm_time_up):
             # Alarm was favorited
-            print("\nAlarm Placed in FavoritedVideos!\n") 
+            print("\nAlarm Placed in FavoritedVideos!\n")
             with open("/home/pi/Desktop/FavoritedVideos", "a") as f:
                 f.write(url)
             break
@@ -254,11 +254,11 @@ def monitor_alarm_and_place_used_url(url, alarm_time_up, alarm_time_down): # Thi
         time.sleep(1)
 
 def change_alarm_manual(alarm_time,alarm_time_up, alarm_time_down, hour_increment, min_increment):
-    
+
     alarm_time_temp = ATime(alarm_time.TimeString) #create temp alarm time
     print ("\n~~~~~~~~~Alarm Time Changer~~~~~~~~~~~")
     time.sleep(2)
-                    
+
     #Change hour state
     print("\n  Change Hour:", end="\r")
     time.sleep(2) #hold change hour message for 2 seconds
@@ -266,7 +266,7 @@ def change_alarm_manual(alarm_time,alarm_time_up, alarm_time_down, hour_incremen
     seconds_down_held = 0
     seconds_idle = 0
     print ("  New Alarm Time = ", alarm_time_temp.TimeString , end="\r")
-    
+
     while seconds_up_held < 2 and seconds_down_held < 2 and seconds_idle < 15:
         if not GPIO.input(alarm_time_down):
             seconds_idle = 0
@@ -297,13 +297,13 @@ def change_alarm_manual(alarm_time,alarm_time_up, alarm_time_down, hour_incremen
             seconds_up_held = 0
             seconds_down_held = 0
         time.sleep(0.1)
-                    
+
     if seconds_down_held >= 2 or seconds_idle >= 15:
         print("                                             ", end="\r")
         print("  Alarm Time Change Cancelled...")
         print ("\n~~~~~~~~~Alarm Time Changer End~~~~~~~\n")
         return 0#exits out of alarm change state if seconds down was held for 2 seconds or if idle for 15 seconds
-    
+
     #Change minute state
     print("                                             ", end="\r")
     print("  Change Minute:", end="\r")
@@ -312,7 +312,7 @@ def change_alarm_manual(alarm_time,alarm_time_up, alarm_time_down, hour_incremen
     seconds_down_held = 0
     seconds_idle = 0
     print ("  New Alarm Time = ", alarm_time_temp.TimeString , end="\r")
-    
+
     while seconds_up_held < 2 and seconds_down_held < 2 and seconds_idle < 15:
         if not GPIO.input(alarm_time_down):
             seconds_idle = 0
@@ -343,7 +343,7 @@ def change_alarm_manual(alarm_time,alarm_time_up, alarm_time_down, hour_incremen
             seconds_up_held = 0
             seconds_down_held = 0
         time.sleep(0.1)
-        
+
     if seconds_down_held >= 2 or seconds_idle >= 15:
         print("                                             ", end="\r")
         print("  Alarm Time Change Cancelled...")
@@ -355,5 +355,5 @@ def change_alarm_manual(alarm_time,alarm_time_up, alarm_time_down, hour_incremen
     print ("  Changing alarm time...", end="\r")
     time.sleep(2)
     alarm_time = alarm_time_temp
-    
+
     return alarm_time #break out of 60 second while loop now that alarm has been changed

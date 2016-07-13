@@ -2,7 +2,7 @@
 #How I got this setup...
 '''
 Open command prompt.
-Once loaded type sudo idle3 & and press enter on the keyboard. 
+Once loaded type sudo idle3 & and press enter on the keyboard.
 This will load the Python 3 programming environment called IDLE3 as the
 super user which allows you to create a program that affects the GPIO pins.
 Once loaded click on file and new window.
@@ -97,7 +97,7 @@ def print_num_to_out(num):
     str_num = str(num)
     with open("/home/pi/Desktop/out", "w") as f:
         f.write(str_num)
-    
+
 
 '''
 ...............CONTROL FUNCTIONS................
@@ -114,7 +114,7 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
         #Get current time
         now = datetime.datetime.now()
         current_time = ATime(now.strftime("%H:%M"))
-        
+
         #If it is alarm time, play alarm
         if current_time.TimeString == alarm_time.TimeString:
             print_num_to_out(3) # testing...
@@ -122,22 +122,22 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
             print_num_to_out(4) # testing...
             play_youtube_video(url)
             monitor_alarm_and_place_used_url(url, alarm_time_up, alarm_time_down)
-            
+
         is_heater_on = Update_heater_state(is_heater_on, current_time.TimeString)
-               
+
         time.sleep(45)
-        
+
     if is_heater_on:
         turn_heater_off()
         is_heater_on = False
-        print("\nHeater turned off due to end of interval") 
+        print("\nHeater turned off due to end of interval")
 
 
 def master_regulator():
     # constants:
     min_increment = 5
     hour_increment = 1
-    
+
     # initial states
     alarm_time = ATime("08:00")
     I_am_here = True
@@ -163,24 +163,24 @@ def master_regulator():
 
     #Derive other alarm times
     heater_time, heater_off_time = get_all_alarm_times(alarm_time)
-    
+
     print ("\nAlarm is set for", alarm_time.TimeString)
     print ("Heater will turn on at", heater_time.TimeString)
     print ("Heater will turn off at", heater_off_time.TimeString)
 
-    
-    
+
+
     while True:
 
         ###### Input and alarm time checks (Every minute) ######
 
-            
+
         #Get current time
         now = datetime.datetime.now()
         current_time = ATime(now.strftime("%H:%M"))
 
         print_num_to_out(0) # testing...
-        
+
         #Decide whether it is alarm time and what to do with heater
         one_min_late = ATime(alarm_time.TimeString, "add", 1, "min")
         if (current_time.TimeString == heater_time.TimeString or current_time.TimeString == one_min_late.TimeString) and alarm_on :
@@ -199,8 +199,8 @@ def master_regulator():
                 print("\nHeater turned off per remote request\n")
             else:
                 print("\nHeater already in this state!\n")
-            remote_heater_request = False   # The request has been fufilled 
-            
+            remote_heater_request = False   # The request has been fufilled
+
         elif I_am_here or heater_on_remotely:
             is_heater_on = Update_heater_state(is_heater_on, current_time.TimeString)
             if not is_heater_on and heater_on_remotely: # Once heater is turned off after a remote request,
@@ -213,11 +213,11 @@ def master_regulator():
 
         #Check for new urls from gmail
         run_script_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py", "poll", "-m", "AddUrls"])
-       
+
 
         #Check for new alarm requests from gmail
         run_script_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py", "poll", "-m", "AlarmRequest"])
-        
+
         with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/alarm_state_buffer", "r") as f_read:
             text_state = f_read.readlines()
             if text_state == ['On\n']:
@@ -231,7 +231,7 @@ def master_regulator():
                 with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/alarm_state_buffer", "w") as f_write:
                     f_write.write("")
             else:
-                pass 
+                pass
             # Then you should send an email back to the sender with the
             # result (can store text of email in the text buffer)
 
@@ -251,7 +251,7 @@ def master_regulator():
                 with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/heater_state_buffer", "w") as f_write:
                     f_write.write("")
             else:
-                pass 
+                pass
             # Then you should send an email back to the sender with the
             # result (can store text of email in the text buffer). Maybe give
             # a prediction of how long it will take to get to get warm based
@@ -260,7 +260,7 @@ def master_regulator():
 
         ####### Input checks (Every second) ######
 
-        
+
         seconds_up_held = 0
         seconds = 0
         while seconds < 60:
@@ -282,14 +282,14 @@ def master_regulator():
                     break
             else:
                 seconds_up_held = 0
-                
+
             #Get whether I am here
             if (not GPIO.input(I_am_here_pin)) and heater_off_remotely == False:
                 I_am_here = True
             elif  GPIO.input(I_am_here_pin):
                 I_am_here = False
                 heater_off_remotely = False # Now that user is here we can disregard the remote request
-                
+
             seconds = seconds + 1
             time.sleep(1)
 
@@ -299,20 +299,9 @@ def master_regulator():
 '''
 # Parse arguments
 parser = argparse.ArgumentParser(description='parse arges')
-parser.add_argument('-p', dest="process", 
+parser.add_argument('-p', dest="process",
                     help='pass in the callers proccess id')
 
 args = parser.parse_args
 
-
 master_regulator()
-
-
-
-
-
-
-
-
-
-

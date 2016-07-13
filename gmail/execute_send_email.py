@@ -67,24 +67,6 @@ def get_credentials():
     return credentials
 
 def send_git_pull_request():
-    """Sends an email 
-
-    Creates a Gmail API service object and then creates an email and sends that email
-    """
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('gmail', 'v1', http=http)
-
-   
-    sender = "snoozinforabruisin@gmail.com"
-    to = "snoozinforabruisin@gmail.com"
-    subject = "GitRequest"
-    message_text = "Pull"
-    
-    message = mail.CreateMessage(sender, to, subject, message_text)
-    mail.SendMessage(service, "me", message)
-
-def send_error_message():
     """Sends an email
 
     Creates a Gmail API service object and then creates an email and sends that email
@@ -92,12 +74,47 @@ def send_error_message():
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('gmail', 'v1', http=http)
-   
+
+
+    sender = "snoozinforabruisin@gmail.com"
+    to = "snoozinforabruisin@gmail.com"
+    subject = "GitRequest"
+    message_text = "Pull"
+
+    message = mail.CreateMessage(sender, to, subject, message_text)
+    mail.SendMessage(service, "me", message)
+
+def send_warning_message(): #A warning message corresponds to errors that don't cause the entire program to fail and exit
+    """Sends an email
+
+    Creates a Gmail API service object and then creates an email and sends that email
+    """
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('gmail', 'v1', http=http)
+
+    sender = "snoozinforabruisin@gmail.com"
+    to = "snoozinforabruisin@gmail.com"
+    subject = "warning..."
+    message_text = "Received Error Message:\n\n" + message_body
+
+    message = mail.CreateMessage(sender, to, subject, message_text)
+    mail.SendMessage(service, "me", message)
+
+def send_error_message(): #An error message corresponds to something that causes the entire program to fail and exit
+    """Sends an email
+
+    Creates a Gmail API service object and then creates an email and sends that email
+    """
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('gmail', 'v1', http=http)
+
     sender = "snoozinforabruisin@gmail.com"
     to = "snoozinforabruisin@gmail.com"
     subject = "Failure!"
     message_text = "Received Error Message:\n\n" + message_body
-    
+
     message = mail.CreateMessage(sender, to, subject, message_text)
     mail.SendMessage(service, "me", message)
 
@@ -110,15 +127,15 @@ def send_success_message():
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('gmail', 'v1', http=http)
 
-   
+
     sender = "snoozinforabruisin@gmail.com"
     to = "snoozinforabruisin@gmail.com"
     subject = "Success!"
     message_text = ""
-    
+
     message = mail.CreateMessage(sender, to, subject, message_text)
     mail.SendMessage(service, "me", message)
-    
+
 def send_custom():
     """Sends an email with an attachment
 
@@ -128,7 +145,7 @@ def send_custom():
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('gmail', 'v1', http=http)
 
-   
+
     sender = "snoozinforabruisin@gmail.com"
     to = "snoozinforabruisin@gmail.com"
     subject = "Custom Subject"
@@ -145,6 +162,8 @@ def send_custom():
 def main():
     if email_version == "GitPullRequest":
         send_git_pull_request()
+    elif email_version == "SendWarningMessage":
+        send_warning_message()
     elif email_version == "SendErrorMessage":
         send_error_message()
     elif email_version == "SendSuccessMessage":

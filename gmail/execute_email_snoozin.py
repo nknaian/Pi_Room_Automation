@@ -121,7 +121,7 @@ def poll_for_urls():
 
     # Check if file is empty (for later use)
     empty = False
-    urlTextFile = "C:\\Users\\nickk_000\\Desktop\\Random_urls.txt" #change to "/home/pi/Desktop/Random_urls"
+    urlTextFile = "/home/pi/Desktop/Random_urls" #change to "C:\\Users\\nickk_000\\Desktop\\Random_urls.txt" for laptop testing
     if os.stat(urlTextFile).st_size == 0:
         empty = True
 

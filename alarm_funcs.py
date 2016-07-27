@@ -162,7 +162,9 @@ def pick_random_url_from_file():
         urls = f.readlines()
     random.seed()
     rand_url_index = random.randint(0, len(urls) - 1)
-    url = urls[rand_url_index]
+    line = urls[rand_url_index]
+    url = line.rpartition(',')[0]
+    nameAndEmail = line.rpartition(',')[1]
 
     # Delete url from "Random_url" and move to "PlayedVideos"
     iterator = 0

@@ -105,12 +105,15 @@ def poll_for_urls():
     # Mark message as read
     msgLabel = { 'removeLabelIds': ['UNREAD'] }
     service.users().messages().modify(userId="me", id=our_message['id'], body= msgLabel).execute()
-    
+
     # Go through message and capture text of message body
     for part in message.walk():
         message.get_payload()
         if part.get_content_type() == 'text/plain':
             messageBody = part.get_payload()
+
+    # Get email address of sender
+    sender = message["From"]
 
     # Filter message body into a list of the youtube videos (right now will put any http link in the list)
     videos = []
@@ -118,11 +121,12 @@ def poll_for_urls():
 
     # Check if file is empty (for later use)
     empty = False
-    if os.stat("/home/pi/Desktop/Random_urls").st_size == 0:
+    urlTextFile = "C:\\Users\\nickk_000\\Desktop\\Random_urls.txt" #change to "/home/pi/Desktop/Random_urls"
+    if os.stat(urlTextFile).st_size == 0:
         empty = True
 
     # append urls onto file where urls are contained, putting each one on a new line
-    with open("/home/pi/Desktop/Random_urls", "a") as myFile:
+    with open(urlTextFile, "a") as myFile:
         iterator = 0
         for link in videos:
             if empty == True and iterator == 0:
@@ -130,12 +134,14 @@ def poll_for_urls():
             else:
                 myFile.write("\n")
             myFile.write(link)
+            myFile.write(", ")
+            myFile.write(sender)
             iterator += 1
-    
+
     print("\nNew videos addded:\n")
     print(videos)
     print("\n")
-    
+
 
 def poll_for_heater_requests():
     """Checks inbox for message with certain subject line, prints a snippet of the message
@@ -158,7 +164,7 @@ def poll_for_heater_requests():
     # Mark message as read
     msgLabel = { 'removeLabelIds': ['UNREAD'] }
     service.users().messages().modify(userId="me", id=our_message['id'], body= msgLabel).execute()
-    
+
     # Go through message and capture text of message body
     for part in message.walk():
         message.get_payload()
@@ -196,7 +202,7 @@ def poll_for_alarm_requests():
     # Mark message as read
     msgLabel = { 'removeLabelIds': ['UNREAD'] }
     service.users().messages().modify(userId="me", id=our_message['id'], body= msgLabel).execute()
-    
+
     # Go through message and capture text of message body
     for part in message.walk():
         message.get_payload()
@@ -229,7 +235,7 @@ def poll_for_git_requests():
     # Mark message as read
     msgLabel = { 'removeLabelIds': ['UNREAD'] }
     service.users().messages().modify(userId="me", id=our_message['id'], body= msgLabel).execute()
-    
+
     # Go through message and capture text of message body
     for part in message.walk():
         message.get_payload()
@@ -239,13 +245,13 @@ def poll_for_git_requests():
     # Decide action based on what kind of git request it is
     if messageBody == "Pull":
         git_pull_command = "git pull origin master"
-        git_pull_out = subprocess.check_output(shlex.split(git_pull_command), cwd="/home/pi/Desktop/Git_repo/Pi_Room_Automation" ) 
-        
-      
+        git_pull_out = subprocess.check_output(shlex.split(git_pull_command), cwd="/home/pi/Desktop/Git_repo/Pi_Room_Automation" )
+
+
     else:
         print("\nUnrecognized GitRequest...\n")
         input()
-      
+
 def main():
 
     if poll_mode == "AddUrls":
@@ -263,4 +269,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

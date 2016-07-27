@@ -1,4 +1,4 @@
-#!python3
+ #!python3
 #How I got this setup...
 '''
 Open command prompt.
@@ -139,7 +139,7 @@ def master_regulator():
     hour_increment = 1
 
     # initial states
-    alarm_time = ATime("08:00")
+    alarm_time = ATime("07:00")
     I_am_here = True
     is_heater_on = False
     remote_heater_request = False

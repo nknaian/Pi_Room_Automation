@@ -169,7 +169,7 @@ def master_regulator():
     print ("Heater will turn off at", heater_off_time.TimeString)
 
 
-
+    prev_time = ATime(now.strftime("%H:%M"))
     while True:
 
         ###### Input and alarm time checks (Every minute) ######
@@ -180,7 +180,12 @@ def master_regulator():
         current_time = ATime(now.strftime("%H:%M"))
 
         #Test print to track when we come back from a long time since the last loop
-        print("Re-entering the while loop at ", current_time.TimeString)
+        prev_plus_one = ATime(prev_time.TimeString, "add", 1, "min")
+        if prev_plus_one.TimeString == current_time.TimeString :
+            print("Re-entering the while loop at ", current_time.TimeString)
+        else:
+            print(current_time.TimeString)
+        prev_time = current_time # Set prev equal to current for next time
 
         #Decide whether it is alarm time and what to do with heater
         one_min_late = ATime(alarm_time.TimeString, "add", 1, "min")

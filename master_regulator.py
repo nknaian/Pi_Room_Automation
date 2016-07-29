@@ -114,8 +114,13 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
             #play_youtube_video(url) commented out for testing purposes
             wake_up_time, wasFavorited, didFail = monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down)
 
-            print(url_line, url, firstName, lastName, email, wake_up_time, wasFavorited, didFail)
+            #Create string vresions of booleans:
+            str_wasFavorited = str(wasFavorited)
+            str_didFail = str(didFail)
+
             #Send email here
+            if email != "???":
+                run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendAlarmNotification", "-e", email, "-n", firstName, "-u", url, "-t", wake_up_time, "-f", str_wasFavorited, "-F", str_didFail])
 
         is_heater_on = Update_heater_state(is_heater_on, current_time.TimeString)
 

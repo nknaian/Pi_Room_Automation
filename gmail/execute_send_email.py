@@ -24,9 +24,34 @@ try:
                         help='Parse the email version')
     email_parser.add_argument('-b', '--body', dest='message_body', required=False,
                         help='argument to pass in message body')
+
+    #### Start args for send_alarm_notification() ####
+    email_parser.add_argument('-e', '--email_address', dest='recipient_email_address', required=False,
+                        help='argument to pass in email address of recipient')
+    email_parser.add_argument('-n', '--name', dest='first_name', required=False,
+                        help='argument to pass in name of email recipient')
+    email_parser.add_argument('-u', '--url', dest='url', required=False,
+                        help='argument to pass in played url')
+    email_parser.add_argument('-t', '--time', dest='wake_up_time', required=False,
+                        help='argument to pass in name wake_up_time')
+    email_parser.add_argument('-f', '--favorited', dest='was_favorited', required=False,
+                        help='boolean argument to pass whether the video was favorited')
+    email_parser.add_argument('-F', '--failed', dest='did_fail', required=False,
+                        help='boolean argument to pass whether the video failed')
+    #### End args for send_alarm_notification() ####
+
     args = vars(flags.parse_args())
     email_version = args['email_version']
     message_body = args['message_body']
+
+    #### Start arg vars for send_alarm_notification() ####
+    recipient_email_address = args['recipient_email_address']
+    first_name = args['first_name']
+    url = args['url']
+    wake_up_time = args['wake_up_time']
+    was_favorited = args['was_favorited']
+    did_fail = args['did_fail']
+    #### End args for send_alarm_notification() ####
 except ImportError:
     flags = None
 
@@ -136,6 +161,41 @@ def send_success_message():
     message = mail.CreateMessage(sender, to, subject, message_text)
     mail.SendMessage(service, "me", message)
 
+def send_alarm_notification():
+    """Sends an email to the specified email address, addressed to specified person
+
+    Creates a Gmail API service object and then creates an email and sends that email
+    """
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('gmail', 'v1', http=http)
+
+    sender = "snoozinforabruisin@gmail.com"
+    to = recipient_email_address
+
+    if did_fail == False:
+        subject = "Nick woke up to one of your alarms today!"
+        addressing_part = "Dear " + first_name + ",\n\n"
+        url_part = "Nick woke up to the following video:\n" + url + "\n"
+        wake_up_time_part = "It woke him up in " + wake_up_time + "\n"
+        if was_favorited == True:
+            favorited_part = "And Nick favorited your video!"
+        else:
+            favorited_part = ""
+        end_part = "\nRegards,\nSnoozinforabruisin"
+        message_text = addressing_part + url_part + wake_up_time_part + favorited_part + end_part
+
+    elif did_fail == True:
+        subject = "Oops...one of your alarms didn't wake Nick up"
+        addressing_part = "Dear " + first_name + ",\n\n"
+        url_part = "One of your videos was selected this morning:\n" + url + "\n\n" + "...but Nick didn't wake up to it...he might still bes snoozin!"
+        end_part = "\nRegards,\nSnoozinforabruisin"
+        message_text = addressing_part + url_part + end_part
+    else:
+        "Hmmmm"
+    message = mail.CreateMessage(sender, to, subject, message_text)
+    mail.SendMessage(service, "me", message)
+
 def send_custom():
     """Sends an email with an attachment
 
@@ -168,6 +228,8 @@ def main():
         send_error_message()
     elif email_version == "SendSuccessMessage":
         send_success_message()
+    elif email_version == "SendAlarmNotification":
+        send_alarm_notification()
     elif email_version == "Custom": #For this one user must go into this file and change the variables in send_custom()
         send_custom()
     else:

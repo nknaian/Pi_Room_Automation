@@ -162,14 +162,21 @@ def pick_random_url_from_file():
         urls = f.readlines()
     random.seed()
     rand_url_index = random.randint(0, len(urls) - 1)
-    line = urls[rand_url_index]
-    if "," in line:
-        url = line.rpartition(',')[0]
-        nameAndEmail = line.rpartition(',')[1]
+    url_line = urls[rand_url_index]
+    if ", " in url_line:
+        url = url_line.rpartition(", ")[0]
+        nameAndEmail = url_line.rpartition(", ")[1]
+        firstName = nameAndEmail.rsplit("\n", 5)[0]
+        lastName = nameAndEmail.rsplit("\n", 5)[1]
+        email = nameAndEmail.rsplit("\n", 5)[2]
     else:
-        url = line
+        url = url_line
+        firstName = "???"
+        lastName = "???"
+        email = "???"
 
-    # Delete url from "Random_url" and move to "PlayedVideos"
+   ''' Commented out for testing purposes
+    # Delete url_line from "Random_url"
     iterator = 0
     with open("/home/pi/Desktop/Random_urls", "w") as f_source:
         for i in range(0, len(urls)):
@@ -177,8 +184,8 @@ def pick_random_url_from_file():
                 pass
             else:
                 f_source.write(urls[i])
-
-    return url
+   '''
+    return url_line, url, firstName, lastName, email
 
 def play_youtube_video(url):
     subprocess.Popen("amixer cset numid=3 1", shell=True)
@@ -232,31 +239,72 @@ def run_script_and_monitor(scriptWithArgs): #This function takes the script with
         if returnVal != -1:
             print("\nAn error was encountered...check email for error message")
 
-def monitor_alarm_and_place_used_url(url, alarm_time_up, alarm_time_down): # This function takes 5 min
+def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down): # This function takes 5 min
     elapsed_alarm_time = 0
+    wake_up_time = 1000 #just making it a number much greater than 300
+    bool wasFavorited = False
+    bool didFail = False
+
+    # Get the initial mouse location for comparison later
+    p1 = subprocess.Popen(["xdotool", "getmouselocation", "--shell"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    out, err = p1.communicate()
+    initial_x_line = out.rsplit("\n", 10)[0]
+    initial_y_line = out.rsplit("\n", 10)[1]
+
     while True:
+
+        # Get the current mouse position
+        p2 = subprocess.Popen(["xdotool", "getmouselocation", "--shell"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+        out, err = p2.communicate()
+        current_x_line = out.rsplit("\n", 10)[0]
+        current_y_line = out.rsplit("\n", 10)[1]
+
         if elapsed_alarm_time > 300: # When mic circuit created use that instead of timing to figure if an alarm isn't being played
             # Alarm didn't work...I didn't get up
             print("\nAlarm placed in FailedVideos :/\n")
+            didFail = True
+            ''' commented out for testing purposes
             with open("/home/pi/Desktop/FailedVideos", "a") as f:
-                f.write(url)
+                f.write(url_line)
             subprocess.Popen("omxplayer -o local /home/pi/Desktop/staring_at_the_sun.mp3", shell=True) #the default really should be an annoying alarm...figure that out...
-            time.sleep(10)
+            '''
+            time.sleep(5)
             break
+
+        elif (current_x_line != initial_x_line) and (wake_up_time < elapsed_alarm_time):
+            wake_up_time = elapsed_alarm_time
+
+        elif (current_y_line != initial_y_line) and (wake_up_time < elapsed_alarm_time):
+            wake_up_time = elapsed_alarm_time
+
         elif not GPIO.input(alarm_time_up):
             # Alarm was favorited
             print("\nAlarm Placed in FavoritedVideos!\n")
+            wasFavorited = True
+            ''' commented out for testing purposes
             with open("/home/pi/Desktop/FavoritedVideos", "a") as f:
-                f.write(url)
+                f.write(url_line)
+                '''
             break
+
         elif not GPIO.input(alarm_time_down):
             # Alarm worked, not a favorite though
             print("\nAlarm Placed in PlayedVideos\n")
+            ''' commented out for testing purposes
             with open("/home/pi/Desktop/PlayedVideos", "a") as f:
-                f.write(url)
+                f.write(url_line)
+                '''
             break
+
         elapsed_alarm_time += 1
         time.sleep(1)
+
+        if didFail:
+            wake_up_time = "over 5 minutes"
+        else:
+            wake_up_time = str(wake_up_time) + " seconds"
+
+        return wake_up_time, wasFavorited, didFail
 
 def change_alarm_manual(alarm_time,alarm_time_up, alarm_time_down, hour_increment, min_increment):
 

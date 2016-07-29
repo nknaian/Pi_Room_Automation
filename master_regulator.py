@@ -93,12 +93,6 @@ def Update_heater_state(is_heater_on, current_time):
     return is_heater_on
 
 
-def print_num_to_out(num):
-    str_num = str(num)
-    with open("/home/pi/Desktop/out", "w") as f:
-        f.write(str_num)
-
-
 '''
 ...............CONTROL FUNCTIONS................
 '''
@@ -106,22 +100,21 @@ def print_num_to_out(num):
 
 #If clock is in wrong time zone...use this: sudo dpkg-reconfigure tzdata
 def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
-    print_num_to_out(1) # testing...
     now = datetime.datetime.now()
     current_time = ATime(now.strftime("%H:%M"))
     while heater_off_time.GreaterThan(current_time):
-        print_num_to_out(2) # testing...
         #Get current time
         now = datetime.datetime.now()
         current_time = ATime(now.strftime("%H:%M"))
 
         #If it is alarm time, play alarm
         if current_time.TimeString == alarm_time.TimeString:
-            print_num_to_out(3) # testing...
-            url = pick_random_url_from_file()
-            print_num_to_out(4) # testing...
-            play_youtube_video(url)
-            monitor_alarm_and_place_used_url(url, alarm_time_up, alarm_time_down)
+            url_line, url, firstName, lastName, email = pick_random_url_from_file()
+            #play_youtube_video(url) commented out for testing purposes
+            wake_up_time, wasFavorited, didFail = monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down)
+
+            print(url_line, url, firstName, lastName, email, wake_up_time, wasFavorited, didFail)
+            #Send email here
 
         is_heater_on = Update_heater_state(is_heater_on, current_time.TimeString)
 
@@ -135,7 +128,7 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
 
 def master_regulator():
     # constants:
-    min_increment = 5
+    min_increment = 1
     hour_increment = 1
 
     # initial states
@@ -178,8 +171,6 @@ def master_regulator():
         #Get current time
         now = datetime.datetime.now()
         current_time = ATime(now.strftime("%H:%M"))
-
-        print_num_to_out(0) # testing...
 
         #Decide whether it is alarm time and what to do with heater
         one_min_late = ATime(alarm_time.TimeString, "add", 1, "min")

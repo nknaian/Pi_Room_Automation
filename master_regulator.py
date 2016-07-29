@@ -179,6 +179,9 @@ def master_regulator():
         now = datetime.datetime.now()
         current_time = ATime(now.strftime("%H:%M"))
 
+        #Test print to track when we come back from a long time since the last loop
+        print("Re-entering the while loop at ", current_time.TimeString)
+
         #Decide whether it is alarm time and what to do with heater
         one_min_late = ATime(alarm_time.TimeString, "add", 1, "min")
         if (current_time.TimeString == heater_time.TimeString or current_time.TimeString == one_min_late.TimeString) and alarm_on :

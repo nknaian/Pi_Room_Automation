@@ -300,12 +300,12 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
         elapsed_alarm_time += 1
         time.sleep(1)
 
-        if didFail:
-            wake_up_time = "over 5 minutes"
-        else:
-            wake_up_time = str(wake_up_time) + " seconds"
+    if didFail:
+        wake_up_time = "over 5 minutes"
+    else:
+        wake_up_time = str(wake_up_time) + " seconds"
 
-        return wake_up_time, wasFavorited, didFail
+    return wake_up_time, wasFavorited, didFail
 
 def change_alarm_manual(alarm_time,alarm_time_up, alarm_time_down, hour_increment, min_increment):
 

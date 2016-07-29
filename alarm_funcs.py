@@ -175,7 +175,7 @@ def pick_random_url_from_file():
         lastName = "???"
         email = "???"
 
-   ''' Commented out for testing purposes
+    ''' Commented out for testing purposes
     # Delete url_line from "Random_url"
     iterator = 0
     with open("/home/pi/Desktop/Random_urls", "w") as f_source:
@@ -184,7 +184,7 @@ def pick_random_url_from_file():
                 pass
             else:
                 f_source.write(urls[i])
-   '''
+    '''
     return url_line, url, firstName, lastName, email
 
 def play_youtube_video(url):
@@ -284,7 +284,7 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
             ''' commented out for testing purposes
             with open("/home/pi/Desktop/FavoritedVideos", "a") as f:
                 f.write(url_line)
-                '''
+            '''
             break
 
         elif not GPIO.input(alarm_time_down):
@@ -293,7 +293,7 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
             ''' commented out for testing purposes
             with open("/home/pi/Desktop/PlayedVideos", "a") as f:
                 f.write(url_line)
-                '''
+            '''
             break
 
         elapsed_alarm_time += 1

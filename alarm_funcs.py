@@ -166,9 +166,9 @@ def pick_random_url_from_file():
     if ", " in url_line:
         url = url_line.split(", ")[0]
         nameAndEmail = url_line.split(", ")[1]
-        firstName = nameAndEmail.split("\n", 5)[0]
-        lastName = nameAndEmail.split("\n", 5)[1]
-        email = nameAndEmail.split("\n", 5)[2]
+        firstName = nameAndEmail.split(" ", 5)[0]
+        lastName = nameAndEmail.split(" ", 5)[1]
+        email = nameAndEmail.split(" ", 5)[2]
     else:
         url = url_line
         firstName = "???"

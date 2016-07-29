@@ -171,7 +171,7 @@ def master_regulator():
     # part of testing being done a few lines below:
     now = datetime.datetime.now()
     prev_time = ATime(now.strftime("%H:%M"))
-    
+
     while True:
 
         ###### Input and alarm time checks (Every minute) ######
@@ -183,7 +183,7 @@ def master_regulator():
 
         #Test print to track when we come back from a long time since the last loop
         prev_plus_one = ATime(prev_time.TimeString, "add", 1, "min")
-        if prev_plus_one.TimeString == current_time.TimeString :
+        if prev_plus_one.TimeString != current_time.TimeString :
             print("Re-entering the while loop at ", current_time.TimeString)
         else:
             print(current_time.TimeString)

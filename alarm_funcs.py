@@ -271,10 +271,10 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
             time.sleep(5)
             break
 
-        elif (current_x_line != initial_x_line) and (wake_up_time < elapsed_alarm_time):
+        elif (current_x_line != initial_x_line) and (wake_up_time > elapsed_alarm_time):
             wake_up_time = elapsed_alarm_time
 
-        elif (current_y_line != initial_y_line) and (wake_up_time < elapsed_alarm_time):
+        elif (current_y_line != initial_y_line) and (wake_up_time > elapsed_alarm_time):
             wake_up_time = elapsed_alarm_time
 
         elif not GPIO.input(alarm_time_up):

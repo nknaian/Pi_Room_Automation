@@ -100,7 +100,6 @@ def Update_heater_state(is_heater_on, current_time):
 
 #If clock is in wrong time zone...use this: sudo dpkg-reconfigure tzdata
 def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
-    print("I'm here!")
     now = datetime.datetime.now()
     current_time = ATime(now.strftime("%H:%M"))
     while heater_off_time.GreaterThan(current_time):
@@ -111,7 +110,7 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
         #If it is alarm time, play alarm
         if current_time.TimeString == alarm_time.TimeString:
             url_line, url, firstName, lastName, email = pick_random_url_from_file()
-            #play_youtube_video(url) commented out for testing purposes
+            play_youtube_video(url)
             wake_up_time, wasFavorited, didFail = monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down)
 
             #Create string vresions of booleans:
@@ -136,7 +135,7 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
 
 def master_regulator():
     # constants:
-    min_increment = 1
+    min_increment = 5
     hour_increment = 1
 
     # initial states

@@ -175,7 +175,6 @@ def pick_random_url_from_file():
         lastName = "???"
         email = "???"
 
-    ''' Commented out for testing purposes
     # Delete url_line from "Random_url"
     iterator = 0
     with open("/home/pi/Desktop/Random_urls", "w") as f_source:
@@ -184,7 +183,7 @@ def pick_random_url_from_file():
                 pass
             else:
                 f_source.write(urls[i])
-    '''
+                
     return url_line, url, firstName, lastName, email
 
 def play_youtube_video(url):
@@ -263,11 +262,9 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
             # Alarm didn't work...I didn't get up
             print("\nAlarm placed in FailedVideos :/\n")
             didFail = True
-            ''' commented out for testing purposes
             with open("/home/pi/Desktop/FailedVideos", "a") as f:
                 f.write(url_line)
             subprocess.Popen("omxplayer -o local /home/pi/Desktop/staring_at_the_sun.mp3", shell=True) #the default really should be an annoying alarm...figure that out...
-            '''
             time.sleep(5)
             break
 
@@ -281,22 +278,17 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
             # Alarm was favorited
             print("\nAlarm Placed in FavoritedVideos!\n")
             wasFavorited = True
-            ''' commented out for testing purposes
             with open("/home/pi/Desktop/FavoritedVideos", "a") as f:
                 f.write(url_line)
-            '''
             break
 
         elif not GPIO.input(alarm_time_down):
             # Alarm worked, not a favorite though
             print("\nAlarm Placed in PlayedVideos\n")
-            ''' commented out for testing purposes
             with open("/home/pi/Desktop/PlayedVideos", "a") as f:
                 f.write(url_line)
-            '''
             break
 
-        print(".") # Adding for testing purposes
         elapsed_alarm_time += 1
         time.sleep(1)
 

@@ -248,16 +248,16 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
     # Get the initial mouse location for comparison later
     p1 = subprocess.Popen(["xdotool", "getmouselocation", "--shell"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     out, err = p1.communicate()
-    initial_x_line = out.split("\n", 10)[0]
-    initial_y_line = out.split("\n", 10)[1]
+    initial_x_line = out.split(b'\n', 10)[0]
+    initial_y_line = out.split(b'\n', 10)[1]
 
     while True:
 
         # Get the current mouse position
         p2 = subprocess.Popen(["xdotool", "getmouselocation", "--shell"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
         out, err = p2.communicate()
-        current_x_line = out.split("\n", 10)[0]
-        current_y_line = out.split("\n", 10)[1]
+        current_x_line = out.split(b'\n', 10)[0]
+        current_y_line = out.split(b'\n', 10)[1]
 
         if elapsed_alarm_time > 300: # When mic circuit created use that instead of timing to figure if an alarm isn't being played
             # Alarm didn't work...I didn't get up

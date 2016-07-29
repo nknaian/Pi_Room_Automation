@@ -173,26 +173,27 @@ def send_alarm_notification():
     sender = "snoozinforabruisin@gmail.com"
     to = recipient_email_address
 
-    if did_fail == False:
+    if did_fail == "False":
         subject = "Nick woke up to one of your alarms today!"
         addressing_part = "Dear " + first_name + ",\n\n"
         url_part = "Nick woke up to the following video:\n" + url + "\n"
         wake_up_time_part = "It woke him up in " + wake_up_time + "\n"
-        if was_favorited == True:
+        if was_favorited == "True":
             favorited_part = "And Nick favorited your video!"
         else:
             favorited_part = ""
         end_part = "\nRegards,\nSnoozinforabruisin"
         message_text = addressing_part + url_part + wake_up_time_part + favorited_part + end_part
 
-    elif did_fail == True:
+    elif did_fail == "True":
         subject = "Oops...one of your alarms didn't wake Nick up"
         addressing_part = "Dear " + first_name + ",\n\n"
         url_part = "One of your videos was selected this morning:\n" + url + "\n\n" + "...but Nick didn't wake up to it...he might still bes snoozin!"
         end_part = "\nRegards,\nSnoozinforabruisin"
         message_text = addressing_part + url_part + end_part
     else:
-        "Hmmmm"
+        print("Hmmmm")
+
     message = mail.CreateMessage(sender, to, subject, message_text)
     mail.SendMessage(service, "me", message)
 

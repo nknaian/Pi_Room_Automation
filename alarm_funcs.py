@@ -164,11 +164,11 @@ def pick_random_url_from_file():
     rand_url_index = random.randint(0, len(urls) - 1)
     url_line = urls[rand_url_index]
     if ", " in url_line:
-        url = url_line.rpartition(", ")[0]
-        nameAndEmail = url_line.rpartition(", ")[1]
-        firstName = nameAndEmail.rsplit("\n", 5)[0]
-        lastName = nameAndEmail.rsplit("\n", 5)[1]
-        email = nameAndEmail.rsplit("\n", 5)[2]
+        url = url_line.split(", ")[0]
+        nameAndEmail = url_line.split(", ")[1]
+        firstName = nameAndEmail.split("\n", 5)[0]
+        lastName = nameAndEmail.split("\n", 5)[1]
+        email = nameAndEmail.split("\n", 5)[2]
     else:
         url = url_line
         firstName = "???"
@@ -248,16 +248,16 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
     # Get the initial mouse location for comparison later
     p1 = subprocess.Popen(["xdotool", "getmouselocation", "--shell"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     out, err = p1.communicate()
-    initial_x_line = out.rsplit("\n", 10)[0]
-    initial_y_line = out.rsplit("\n", 10)[1]
+    initial_x_line = out.split("\n", 10)[0]
+    initial_y_line = out.split("\n", 10)[1]
 
     while True:
 
         # Get the current mouse position
         p2 = subprocess.Popen(["xdotool", "getmouselocation", "--shell"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
         out, err = p2.communicate()
-        current_x_line = out.rsplit("\n", 10)[0]
-        current_y_line = out.rsplit("\n", 10)[1]
+        current_x_line = out.split("\n", 10)[0]
+        current_y_line = out.split("\n", 10)[1]
 
         if elapsed_alarm_time > 300: # When mic circuit created use that instead of timing to figure if an alarm isn't being played
             # Alarm didn't work...I didn't get up
@@ -296,6 +296,7 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
             '''
             break
 
+        print(".") # Adding for testing purposes
         elapsed_alarm_time += 1
         time.sleep(1)
 

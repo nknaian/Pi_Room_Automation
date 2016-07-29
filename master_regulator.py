@@ -100,6 +100,7 @@ def Update_heater_state(is_heater_on, current_time):
 
 #If clock is in wrong time zone...use this: sudo dpkg-reconfigure tzdata
 def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
+    print "I'm here!"
     now = datetime.datetime.now()
     current_time = ATime(now.strftime("%H:%M"))
     while heater_off_time.GreaterThan(current_time):

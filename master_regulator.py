@@ -23,7 +23,7 @@ import os
 import signal
 
 # local imports
-from alarm_funcs import ATime, get_all_alarm_times, pick_random_url_from_file, play_youtube_video, run_script_and_monitor, monitor_alarm_and_place_used_url, change_alarm_manual
+from alarm_funcs import ATime, get_all_alarm_times, pick_random_url_from_file, play_youtube_video, run_script_and_monitor, monitor_alarm_and_place_used_url, change_alarm_manual, run_send_email_and_monitor
 
 '''
 ............... SETUP ................

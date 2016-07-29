@@ -168,8 +168,10 @@ def master_regulator():
     print ("Heater will turn on at", heater_time.TimeString)
     print ("Heater will turn off at", heater_off_time.TimeString)
 
-
+    # part of testing being done a few lines below:
+    now = datetime.datetime.now()
     prev_time = ATime(now.strftime("%H:%M"))
+    
     while True:
 
         ###### Input and alarm time checks (Every minute) ######

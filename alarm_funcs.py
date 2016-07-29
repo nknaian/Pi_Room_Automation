@@ -242,8 +242,8 @@ def run_script_and_monitor(scriptWithArgs): #This function takes the script with
 def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down): # This function takes 5 min
     elapsed_alarm_time = 0
     wake_up_time = 1000 #just making it a number much greater than 300
-    bool wasFavorited = False
-    bool didFail = False
+    wasFavorited = False
+    didFail = False
 
     # Get the initial mouse location for comparison later
     p1 = subprocess.Popen(["xdotool", "getmouselocation", "--shell"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)

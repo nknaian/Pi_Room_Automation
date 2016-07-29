@@ -120,8 +120,10 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
 
             #Send email here
             if email != "???":
+                print("Sending email")
                 run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendAlarmNotification", "-e", email, "-n", firstName, "-u", url, "-t", wake_up_time, "-f", str_wasFavorited, "-F", str_didFail])
-
+            else:
+                print("no email link found")
         is_heater_on = Update_heater_state(is_heater_on, current_time.TimeString)
 
         time.sleep(45)
@@ -138,7 +140,7 @@ def master_regulator():
     hour_increment = 1
 
     # initial states
-    alarm_time = ATime("07:00")
+    alarm_time = ATime("07:30")
     I_am_here = True
     is_heater_on = False
     remote_heater_request = False

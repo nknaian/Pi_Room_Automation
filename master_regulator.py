@@ -316,7 +316,7 @@ args = parser.parse_args
 while True:
     try:
         master_regulator()
-    except suprocess.TimeoutExpired as error:
+    except subprocess.TimeoutExpired as error:
         print(error)
     except Exception as error:
         print(error)

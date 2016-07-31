@@ -206,12 +206,12 @@ def play_youtube_video(url):
     '''
 
 def run_send_email_and_monitor(scriptWithArgs):
-    out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 3)
+    out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 0.000001)
 
     #Print out the stdout from the script:
-    out_str = str(out)
-    out_str = out_str[2:-1]
-    print(out_str)
+    #out_str = str(out)
+    #out_str = out_str[2:-1]
+    print(out)
 
     '''
     #If the script encountered an error, print error to leapfad (by using print statement)
@@ -223,12 +223,13 @@ def run_send_email_and_monitor(scriptWithArgs):
     '''
 
 def run_script_and_monitor(scriptWithArgs): #This function takes the script with args as a list, just as it would be typed in terminal...use to relay standard error and output (will not work for execute_send_email)
-    out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 3)
+    out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 0.000001)
 
     #Print out the stdout from the script:
-    out_str = str(out)
-    out_str = out_str[2:-1]
-    print(out_str) #for some reason this line is causing 3 new lines to appear once a minute, but they aren't in out_str...? so....something about the stdout pipe I guess?
+    #out_str = str(out)
+    #out_str = out_str[2:-1]
+    #if out_str !=
+    print(out) #for some reason this line is causing 3 new lines to appear once a minute, but they aren't in out_str...? so....something about the stdout pipe I guess?
 
     '''
     #If the script encountered an error, send in email

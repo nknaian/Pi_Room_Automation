@@ -312,4 +312,12 @@ parser.add_argument('-p', dest="process",
 
 args = parser.parse_args
 
-master_regulator()
+#If a timeout exception occurs, just start the master regulator again
+while True:
+    try:
+        master_regulator()
+    except TimeoutExpired as error:
+        print error
+    except Exception as error:
+        print error
+        break

@@ -317,7 +317,7 @@ while True:
     try:
         master_regulator()
     except TimeoutExpired as error:
-        print error
+        print(error)
     except Exception as error:
-        print error
+        print(error)
         break

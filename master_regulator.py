@@ -318,6 +318,7 @@ while True:
         master_regulator()
     except subprocess.TimeoutExpired as error:
         print(error)
+        returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendWarningMessage", "-b", error])
     except Exception as error:
         print(error)
         break

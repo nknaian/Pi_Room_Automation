@@ -183,7 +183,7 @@ def pick_random_url_from_file():
                 pass
             else:
                 f_source.write(urls[i])
-                
+
     return url_line, url, firstName, lastName, email
 
 def play_youtube_video(url):
@@ -206,7 +206,7 @@ def play_youtube_video(url):
     '''
 
 def run_send_email_and_monitor(scriptWithArgs):
-    proc = subprocess.Popen(scriptWithArgs, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    proc = subprocess.Popen(scriptWithArgs, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, timeout = 3)
     out, err = proc.communicate()
 
     #Print out the stdout from the script:
@@ -222,7 +222,7 @@ def run_send_email_and_monitor(scriptWithArgs):
         return -1
 
 def run_script_and_monitor(scriptWithArgs): #This function takes the script with args as a list, just as it would be typed in terminal...use to relay standard error and output (will not work for execute_send_email)
-    proc = subprocess.Popen(scriptWithArgs, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    proc = subprocess.Popen(scriptWithArgs, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, timeout = 3)
     out, err = proc.communicate()
 
     #Print out the stdout from the script:

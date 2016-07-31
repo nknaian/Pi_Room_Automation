@@ -320,7 +320,8 @@ while True:
         print(error)
         err_str = str(error)
         full_warning_message = err_str + "\n\nMaster Regulator has been restarted, so any flags you've set must now be reset..."
-        returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendWarningMessage", "-b", full_warning_message])
+        if "execute_send_email.py" not in full_warning_message:
+            returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendWarningMessage", "-b", full_warning_message])
     except Exception as error:
         print(error)
         break

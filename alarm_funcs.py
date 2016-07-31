@@ -206,7 +206,7 @@ def play_youtube_video(url):
     '''
 
 def run_send_email_and_monitor(scriptWithArgs):
-    out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 0.000001)
+    out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 5)
 
     #Print out the stdout from the script:
     #out_str = str(out)

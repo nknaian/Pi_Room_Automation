@@ -118,7 +118,7 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
             str_didFail = str(didFail)
 
             # Append stats file (name, url, wake_up_time, was_favorited)
-            with open(""/home/pi/Desktop/snoozin_stats", "a") as f:
+            with open("/home/pi/Desktop/snoozin_stats", "a") as f:
                 write_string = firstName + ", " + lastName + ", "  + url + ", " + wake_up_time + ", " + str_wasFavorited + ", " + str_didFail
                 f.write(write_string)
 

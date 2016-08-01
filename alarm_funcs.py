@@ -211,7 +211,7 @@ def run_send_email_and_monitor(scriptWithArgs):
 
 
 def run_script_and_monitor(scriptWithArgs): #This function takes the script with args as a list, just as it would be typed in terminal...use to relay standard error and output (will not work for execute_send_email)
-    out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 0..000001)
+    out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 0.000001)
     print(out)
 
 

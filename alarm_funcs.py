@@ -152,7 +152,7 @@ class ATime:
 '''
 
 def get_all_alarm_times(alarm_time):
-    heater_time = ATime(alarm_time.TimeString, "sub", 1, "min")
+    heater_time = ATime(alarm_time.TimeString, "sub", 5, "min")
     heater_off_time = ATime(alarm_time.TimeString, "add", 30, "min")
     return heater_time, heater_off_time
 

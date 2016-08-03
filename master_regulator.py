@@ -195,7 +195,7 @@ def master_regulator():
         prev_time = current_time # Set prev equal to current for next time
 
         #Decide whether it is alarm time and what to do with heater
-        one_min_late = ATime(alarm_time.TimeString, "add", 1, "min")
+        one_min_late = ATime(heater_time.TimeString, "add", 1, "min")
         if (current_time.TimeString == heater_time.TimeString or current_time.TimeString == one_min_late.TimeString) and alarm_on :
             alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on)
             is_heater_on = False
@@ -328,5 +328,5 @@ while True:
         if "execute_send_email.py" not in full_warning_message:
             print("\n\n\nThis better be a execute_email_snoozin timeout or else something's weird\n\n\n")
             returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendWarningMessage", "-b", full_warning_message])
-    except Exception as error: 
+    except Exception as error:
         print(error)

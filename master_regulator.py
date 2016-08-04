@@ -119,7 +119,7 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
 
             # Append stats file (name, url, wake_up_time, was_favorited)
             with open("/home/pi/Desktop/snoozin_stats", "a") as f:
-                write_string = firstName + " " + lastName + ", " + url + ", " + str_didFail + ", " + str_wasFavorited + ", "  + wake_up_time
+                write_string = firstName + " " + lastName + ", " + url + ", " + str_didFail + ", " + str_wasFavorited + ", "  + wake_up_time + "\n"
                 f.write(write_string)
 
             #Send email here

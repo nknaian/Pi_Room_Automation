@@ -182,14 +182,14 @@ def send_alarm_notification():
             favorited_part = "And Nick favorited your video!"
         else:
             favorited_part = ""
-        end_part = "\nRegards,\nSnoozinforabruisin"
+        end_part = "\n\nRegards,\nSnoozinforabruisin"
         message_text = addressing_part + url_part + wake_up_time_part + favorited_part + end_part
 
     elif did_fail == "True":
         subject = "Oops...one of your alarms didn't wake Nick up"
         addressing_part = "Dear " + first_name + ",\n\n"
-        url_part = "One of your videos was selected this morning:\n" + url + "\n\n" + "...but Nick didn't wake up to it...he might still bes snoozin!"
-        end_part = "\nRegards,\nSnoozinforabruisin"
+        url_part = "One of your videos was selected this morning:\n" + url + "\n\n" + "...but Nick didn't wake up to it...he might still be snoozin!"
+        end_part = "\n\nRegards,\nSnoozinforabruisin"
         message_text = addressing_part + url_part + end_part
     else:
         print("Hmmmm")

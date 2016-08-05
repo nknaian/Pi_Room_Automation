@@ -73,16 +73,62 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
-def FilterMessageBody(messageBody, videoList):
+# Function to create a list of the urls from the email. Now with some protections so Berj doesn't DOS me.
+def FilterMessageBody(messageBody, videoList, sender, urlTextFile, FavoritedVideosFile):
     tempVideo = ""
+    videoIterator = 0
     for char in messageBody:
         if (char == "\r") or (char == '\t') or (char == '\n'):
             if (tempVideo[:7] == "http://") or (tempVideo[:8] == "https://"):
                 videoList.append(tempVideo)
+                videoIterator += 1
+                if videoIterator > 50:
+                    print("\n\nSomeone just tried sending over 50 videos :|\nChecking through the first 50, ignoring the rest...\n\n")
+                    break
             tempVideo = ""
 
         else:
             tempVideo += char
+
+    # Check to make sure there are no redundant urls in the list being sent
+    numberOfVideos = len(videoList)
+    if numberOfVideos > 1:
+        deleteMatrix = [0]*(numberOfVideos)
+        for i in range(0, numberOfVideos):
+            for j in range(0, numberOfVideos):
+                if i < j: # Only want to make each comparison once, so every instance of the video isn't deleted
+                    if videoList[i] == videoList[j]:
+                        deleteMatrix[j] = 1 # Set the video later in the list to be deleted after traversal
+
+    listIndex = 0
+    for val in deleteMatrix:
+        if val == 1:
+            del videoList[listIndex] # Remove video from videos list
+        else:
+            listIndex +=1  # only increment the list index if the video is not deleted (otherwise the index will shift with the deleted video)
+
+    # Check to make sure the same person hasn't already sent the same url
+    with open(urlTextFile, "r") as myFile:
+        for line in myFile:
+            listIndex = 0
+            for link in videoList:
+                url_line = link + ", " + sender
+                print("\n", url_line, " =? ", line, "\n")
+                if (url_line == line) or ((url_line + "\n") == line):
+                    del videoList[listIndex] # Remove video from videos list
+                else:
+                    listIndex += 1 # only increment the list index if the video is not deleted (otherwise the index will shift with the deleted video)
+
+    with open(FavoritedVideosFile, "r") as myFile:
+        for line in myFile:
+            listIndex = 0
+            for link in videoList:
+                url_line = link + ", " + sender
+                if url_line == line:
+                    del videoList[listIndex] # Remove video from videos list
+                else:
+                    listIndex += 1 # only increment the list index if the video is not deleted (otherwise the index will shift with the deleted video)
+
 
 
 def poll_for_urls():
@@ -115,15 +161,16 @@ def poll_for_urls():
     # Get email address of sender
     sender = message["From"]
 
-    # Filter message body into a list of the youtube videos (right now will put any http link in the list)
-    videos = []
-    FilterMessageBody(messageBody, videos)#, garbage) remove garbage after test
-
     # Check if file is empty (for later use)
     empty = False
     urlTextFile = "/home/pi/Desktop/Random_urls" #change to "C:\\Users\\nickk_000\\Desktop\\Random_urls.txt" for laptop testing
+    FavoritedVideosFile = "/home/pi/Desktop/PlayedVideos"
     if os.stat(urlTextFile).st_size == 0:
         empty = True
+
+    # Filter message body into a list of the youtube videos (right now will put any http link in the list)
+    videos = []
+    FilterMessageBody(messageBody, videos, sender, urlTextFile, FavoritedVideosFile)#, garbage) remove garbage after test
 
     # append urls onto file where urls are contained, putting each one on a new line
     with open(urlTextFile, "a") as myFile:
@@ -133,9 +180,8 @@ def poll_for_urls():
                 pass
             else:
                 myFile.write("\n")
-            myFile.write(link)
-            myFile.write(", ")
-            myFile.write(sender)
+            url_line = link + ", " + sender
+            myFile.write(url_line)
             iterator += 1
 
     print("\nNew videos addded:\n")

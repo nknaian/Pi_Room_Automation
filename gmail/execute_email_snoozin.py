@@ -123,7 +123,7 @@ def FilterMessageBody(messageBody, videoList, sender, urlTextFile, FavoritedVide
             listIndex = 0
             for link in videoList:
                 url_line = link + ", " + sender
-                if url_line == line:
+                if (url_line == line) or ((url_line + "\n") == line):
                     del videoList[listIndex] # Remove video from videos list
                 else:
                     listIndex += 1 # only increment the list index if the video is not deleted (otherwise the index will shift with the deleted video)

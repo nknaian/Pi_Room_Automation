@@ -212,8 +212,9 @@ def run_send_email_and_monitor(scriptWithArgs):
 
 def run_script_and_monitor(scriptWithArgs): #This function takes the script with args as a list, just as it would be typed in terminal...use to relay standard error and output (will not work for execute_send_email)
     out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 60)
-    if out != ['b\'\'\n']:
-        print(out)
+    str_out = str(out)
+    print(str_out, "= ", "b''\n")
+    print("raw output: ",  out)
 
 
 def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down): # This function takes 5 min

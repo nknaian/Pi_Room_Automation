@@ -207,7 +207,9 @@ def play_youtube_video(url):
 
 def run_send_email_and_monitor(scriptWithArgs):
     out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 60)
-    print(out)
+    str_out = str(out)
+    if str_out != "b\'\'":
+        print(out)
 
 
 def run_script_and_monitor(scriptWithArgs): #This function takes the script with args as a list, just as it would be typed in terminal...use to relay standard error and output (will not work for execute_send_email)

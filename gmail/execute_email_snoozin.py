@@ -74,7 +74,7 @@ def get_credentials():
     return credentials
 
 # Function to create a list of the urls from the email. Now with some protections so Berj doesn't DOS me.
-def FilterMessageBody(messageBody, videoList, sender, urlTextFile, FavoritedVideosFile):
+def FilterMessageBody(messageBody, videoList, sender, urlTextFile, PlayedVideosFile):
     tempVideo = ""
     videoIterator = 0
     for char in messageBody:
@@ -100,12 +100,12 @@ def FilterMessageBody(messageBody, videoList, sender, urlTextFile, FavoritedVide
                     if videoList[i] == videoList[j]:
                         deleteMatrix[j] = 1 # Set the video later in the list to be deleted after traversal
 
-    listIndex = 0
-    for val in deleteMatrix:
-        if val == 1:
-            del videoList[listIndex] # Remove video from videos list
-        else:
-            listIndex +=1  # only increment the list index if the video is not deleted (otherwise the index will shift with the deleted video)
+        listIndex = 0
+        for val in deleteMatrix:
+            if val == 1:
+                del videoList[listIndex] # Remove video from videos list
+            else:
+                listIndex +=1  # only increment the list index if the video is not deleted (otherwise the index will shift with the deleted video)
 
     # Check to make sure the same person hasn't already sent the same url
     with open(urlTextFile, "r") as myFile:
@@ -118,7 +118,7 @@ def FilterMessageBody(messageBody, videoList, sender, urlTextFile, FavoritedVide
                 else:
                     listIndex += 1 # only increment the list index if the video is not deleted (otherwise the index will shift with the deleted video)
 
-    with open(FavoritedVideosFile, "r") as myFile:
+    with open(PlayedVideosFile, "r") as myFile:
         for line in myFile:
             listIndex = 0
             for link in videoList:
@@ -162,14 +162,14 @@ def poll_for_urls():
 
     # Check if file is empty (for later use)
     empty = False
-    urlTextFile = "/home/pi/Desktop/Random_urls" #change to "C:\\Users\\nickk_000\\Desktop\\Random_urls.txt" for laptop testing
-    FavoritedVideosFile = "/home/pi/Desktop/PlayedVideos"
+    #urlTextFile = "/home/pi/Desktop/Random_urls" #change to "C:\\Users\\nickk_000\\Desktop\\Random_urls.txt" for laptop testing
+    PlayedVideosFile = "/home/pi/Desktop/PlayedVideos"
     if os.stat(urlTextFile).st_size == 0:
         empty = True
 
     # Filter message body into a list of the youtube videos (right now will put any http link in the list)
     videos = []
-    FilterMessageBody(messageBody, videos, sender, urlTextFile, FavoritedVideosFile)#, garbage) remove garbage after test
+    FilterMessageBody(messageBody, videos, sender, urlTextFile, PlayedVideosFile)#, garbage) remove garbage after test
 
     # append urls onto file where urls are contained, putting each one on a new line
     with open(urlTextFile, "a") as myFile:

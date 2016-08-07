@@ -169,7 +169,7 @@ def master_regulator():
     #Derive other alarm times
     heater_time, heater_off_time = get_all_alarm_times(alarm_time)
 
-    print ("\nAlarm is set for", alarm_time.TimeString)
+    prit ("\nAlarm is set for", alarm_time.TimeString)
     print ("Heater will turn on at", heater_time.TimeString)
     print ("Heater will turn off at", heater_off_time.TimeString)
 
@@ -330,3 +330,4 @@ while True:
             returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendWarningMessage", "-b", full_warning_message])
     except Exception as error:
         print(error)
+        input("Error encounterd...press Enter to run master_regulator again.")

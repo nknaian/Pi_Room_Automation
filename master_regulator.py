@@ -329,4 +329,5 @@ while True:
             print("\n\n\nThis better be a execute_email_snoozin timeout or else something's weird\n\n\n")
             returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendWarningMessage", "-b", full_warning_message])
     except Exception as error:
-        input("Error encounterd:\n\n", error, "\n\n...press Enter to run master_regulator again.\n\n")
+        print("Error encounterd:\n\n", error, "\n\n")
+        input("Press Enter to run master_regulator again...\n\n")

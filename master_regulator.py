@@ -188,7 +188,8 @@ def master_regulator():
 
         #Test print to track when we come back from a long time since the last loop
         prev_plus_one = ATime(prev_time.TimeString, "add", 1, "min")
-        if prev_plus_one.TimeString != current_time.TimeString :
+        prev_plus_two = ATime(prev_time.TimeString, "add", 2, "min")
+        if (prev_plus_one.TimeString != current_time.TimeString) or (prev_plus_two.TimeString != current_time.TimeString) :
             print("Re-entering the while loop at ", current_time.TimeString)
         else:
             print(current_time.TimeString)
@@ -310,7 +311,7 @@ def master_regulator():
 '''
 ...............MAIN BLOCK................
 '''
-# Parse arguments
+# Parse arguments (this currently isn't doing anything)
 parser = argparse.ArgumentParser(description='parse arges')
 parser.add_argument('-p', dest="process",
                     help='pass in the callers proccess id')

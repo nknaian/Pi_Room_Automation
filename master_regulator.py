@@ -325,13 +325,6 @@ unhandledErrorCounter = 0
 while True:
     try:
         master_regulator()
-    except subprocess.TimeoutExpired as error:
-        print(error)
-        err_str = str(error)
-        full_warning_message = err_str + "\n\nMaster Regulator has been restarted, so any flags you've set must now be reset..."
-        if "execute_send_email.py" not in full_warning_message:
-            print("\n\n\nThis better be a execute_email_snoozin timeout or else something's weird\n\n\n")
-            returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendWarningMessage", "-b", full_warning_message])
     except Exception as error:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fileName = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]

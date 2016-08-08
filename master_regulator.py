@@ -21,6 +21,7 @@ import random
 import argparse
 import os
 import signal
+import sys
 
 # local imports
 from alarm_funcs import ATime, get_all_alarm_times, pick_random_url_from_file, play_youtube_video, run_script_and_monitor, monitor_alarm_and_place_used_url, change_alarm_manual, run_send_email_and_monitor
@@ -169,7 +170,7 @@ def master_regulator():
     #Derive other alarm times
     heater_time, heater_off_time = get_all_alarm_times(alarm_time)
 
-    print ("\nAlarm is set for", alarm_time.TimeString)
+    prin ("\nAlarm is set for", alarm_time.TimeString)
     print ("Heater will turn on at", heater_time.TimeString)
     print ("Heater will turn off at", heater_off_time.TimeString)
 
@@ -330,5 +331,8 @@ while True:
             print("\n\n\nThis better be a execute_email_snoozin timeout or else something's weird\n\n\n")
             returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendWarningMessage", "-b", full_warning_message])
     except Exception as error:
-        print("\nAn error of type ", type(error), " encounterd:\n\n", error, "\n\n")
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fileName = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        lineNumber = exc_tb.tb_lineno
+        print("\nAn error of type ", type(error), " was encounterd on line ", lineNumber, " in ", fileName, ":\n\n", error, "\n\n")
         input("Press Enter to run master_regulator again...\n\n")

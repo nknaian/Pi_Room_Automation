@@ -218,13 +218,13 @@ def run_send_email_and_monitor(scriptWithArgs):
 
 def run_script_and_monitor(scriptWithArgs): #This function takes the script with args as a list, just as it would be typed in terminal...use to relay standard error and output (will not work for execute_send_email)
     try:
-        out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 0.0001)
+        out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 60)
     except subprocess.TimeoutExpired as error:
         print(error)
         err_str = str(error)
         full_warning_message = err_str
         returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendWarningMessage", "-b", full_warning_message])
-    finally:
+    else:
         str_out = str(out)
         if str_out != "b\'\'":
             print(out)

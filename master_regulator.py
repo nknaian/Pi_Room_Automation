@@ -170,7 +170,7 @@ def master_regulator():
     heater_time, heater_off_time = get_all_alarm_times(alarm_time)
 
     print ("\nAlarm is set for", alarm_time.TimeString)
-    print ("Heater will turn on at", heater_time.TimeString)
+    prin ("Heater will turn on at", heater_time.TimeString)
     print ("Heater will turn off at", heater_off_time.TimeString)
 
     # part of testing being done a few lines below:
@@ -189,10 +189,10 @@ def master_regulator():
         #Test print to track when we come back from a long time since the last loop
         prev_plus_one = ATime(prev_time.TimeString, "add", 1, "min")
         prev_plus_two = ATime(prev_time.TimeString, "add", 2, "min")
-        if (prev_plus_one.TimeString != current_time.TimeString) or (prev_plus_two.TimeString != current_time.TimeString) :
-            print("Re-entering the while loop at ", current_time.TimeString)
-        else:
+        if (prev_plus_one.TimeString == current_time.TimeString) or (prev_plus_two.TimeString == current_time.TimeString) :
             print(current_time.TimeString)
+        else:
+            print("Re-entering the while loop at ", current_time.TimeString)
         prev_time = current_time # Set prev equal to current for next time
 
         #Decide whether it is alarm time and what to do with heater
@@ -330,5 +330,5 @@ while True:
             print("\n\n\nThis better be a execute_email_snoozin timeout or else something's weird\n\n\n")
             returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendWarningMessage", "-b", full_warning_message])
     except Exception as error:
-        print("\nError encounterd:\n\n", error, "\n\n")
+        print("\nAn error of type ", type(error), " encounterd:\n\n", error, "\n", error.args, "\n\n")
         input("Press Enter to run master_regulator again...\n\n")

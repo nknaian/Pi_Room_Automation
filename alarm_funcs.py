@@ -206,10 +206,14 @@ def play_youtube_video(url):
     '''
 
 def run_send_email_and_monitor(scriptWithArgs):
-    out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 60)
-    str_out = str(out)
-    if str_out != "b\'\'":
-        print(out)
+    try:
+        out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 60)
+    except subprocess.TimeoutExpired as error:
+        print(error)
+    finally:
+        str_out = str(out)
+        if str_out != "b\'\'":
+            print(out)
 
 
 def run_script_and_monitor(scriptWithArgs): #This function takes the script with args as a list, just as it would be typed in terminal...use to relay standard error and output (will not work for execute_send_email)
@@ -220,9 +224,10 @@ def run_script_and_monitor(scriptWithArgs): #This function takes the script with
         err_str = str(error)
         full_warning_message = err_str
         returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendWarningMessage", "-b", full_warning_message])
-    str_out = str(out)
-    if str_out != "b\'\'":
-        print(out)
+    finally:
+        str_out = str(out)
+        if str_out != "b\'\'":
+            print(out)
 
 
 def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down): # This function takes 5 min

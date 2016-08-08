@@ -321,6 +321,7 @@ args = parser.parse_args
 
 #If a timeout exception occurs, just start the master regulator again
 while True:
+    unhandledErrorCounter = 0
     try:
         master_regulator()
     except subprocess.TimeoutExpired as error:
@@ -335,4 +336,8 @@ while True:
         fileName = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         lineNumber = exc_tb.tb_lineno
         print("\nAn error of type ", type(error), " was encounterd on line ", lineNumber, " in ", fileName, ":\n\n", error, "\n\n")
-        input("Press Enter to run master_regulator again...\n\n")
+        if unhandledErrorCounter >= 4:
+            input("Error has been encounterd 4 times...Press Enter to run master_regulator again...\n\n")
+            unhandledErrorCounter = 0
+        else:
+            unhandledErrorCounter += 1

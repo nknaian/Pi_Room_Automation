@@ -340,7 +340,7 @@ while True:
         print(error_message)
         if unhandledErrorCounter >= 4:
             full_error_message = "Unhandled exceptions have been encountered 4 times...must manually restart the function or fix the problem.\n\n The last error encountered was:\n\n" + error_message
-            returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendErrorMessage", "-b", full_error_message])
+            #returnVal = run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendErrorMessage", "-b", full_error_message])
             input("Unhandled errors have been encounterd 4 times...Press Enter to run master_regulator again...\n\n")
             unhandledErrorCounter = 0
         else:

@@ -336,6 +336,7 @@ while True:
         fileName = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         lineNumber = exc_tb.tb_lineno
         print("\nAn error of type ", type(error), " was encounterd on line ", lineNumber, " in ", fileName, ":\n\n", error, "\n\n")
+        print("number of errors = ", str(unhandledErrorCounter))
         if unhandledErrorCounter >= 4:
             input("Error has been encounterd 4 times...Press Enter to run master_regulator again...\n\n")
             unhandledErrorCounter = 0

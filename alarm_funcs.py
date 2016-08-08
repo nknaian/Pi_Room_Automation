@@ -210,7 +210,7 @@ def run_send_email_and_monitor(scriptWithArgs):
         out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 60)
     except subprocess.TimeoutExpired as error:
         print(error)
-    finally:
+    else:
         str_out = str(out)
         if str_out != "b\'\'":
             print(out)
@@ -218,7 +218,7 @@ def run_send_email_and_monitor(scriptWithArgs):
 
 def run_script_and_monitor(scriptWithArgs): #This function takes the script with args as a list, just as it would be typed in terminal...use to relay standard error and output (will not work for execute_send_email)
     try:
-        out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 60)
+        out = subprocess.check_output(scriptWithArgs, stderr=subprocess.STDOUT, timeout = 0.00001)
     except subprocess.TimeoutExpired as error:
         print(error)
         err_str = str(error)

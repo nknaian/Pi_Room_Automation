@@ -112,7 +112,7 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
         if current_time.TimeString == alarm_time.TimeString:
             url_line, url, firstName, lastName, email = pick_random_url_from_file()
             browser = play_youtube_video(url)
-            wake_up_time, wasFavorited, didFail = monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down, browser)
+            wake_up_time, wasFavorited, didFail = monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down, browser, firstName, lastName)
 
             #Create string vresions of booleans:
             str_wasFavorited = str(wasFavorited)

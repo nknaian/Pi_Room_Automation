@@ -141,7 +141,7 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
 
 def master_regulator():
     # constants:
-    min_increment = 1
+    min_increment = 5
     hour_increment = 1
 
     # initial states

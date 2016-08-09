@@ -152,13 +152,13 @@ class ATime:
 '''
 
 def get_all_alarm_times(alarm_time):
-    heater_time = ATime(alarm_time.TimeString, "sub", 1, "min")
+    heater_time = ATime(alarm_time.TimeString, "sub", 5, "min")
     heater_off_time = ATime(alarm_time.TimeString, "add", 30, "min")
     return heater_time, heater_off_time
 
 def pick_random_url_from_file():
     # Pick random url
-    with open("/home/pi/Desktop/test_urls") as f:
+    with open("/home/pi/Desktop/Random_urls") as f:
         urls = f.readlines()
     random.seed()
     rand_url_index = random.randint(0, len(urls) - 1)
@@ -177,7 +177,7 @@ def pick_random_url_from_file():
 
     # Delete url_line from "Random_url"
     iterator = 0
-    with open("/home/pi/Desktop/test_urls", "w") as f_source:
+    with open("/home/pi/Desktop/Random_urls", "w") as f_source:
         for i in range(0, len(urls)):
             if i == rand_url_index:
                 pass
@@ -264,18 +264,18 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
 
         elif (current_x_line != initial_x_line) and (wake_up_time > elapsed_alarm_time):
             wake_up_time = elapsed_alarm_time
-            subprocess.Popen("amixer cset numid=1 85%", shell=True) # Set volume to 50%
+            subprocess.Popen("amixer cset numid=1 86%", shell=True) # Set volume to 50%
             break
 
         elif (current_y_line != initial_y_line) and (wake_up_time > elapsed_alarm_time):
             wake_up_time = elapsed_alarm_time
-            subprocess.Popen("amixer cset numid=1 85%", shell=True) # Set volume to 50%
+            subprocess.Popen("amixer cset numid=1 86%", shell=True) # Set volume to 50%
             break
 
         elapsed_alarm_time += 1
         time.sleep(1)
 
-    print("\nAlaram brought to you this morning by ", firstName, " ", lastName, "\n")
+    print("\nAlaram brought to you this morning by ", firstName, lastName, "\n")
 
     # Put in additional feedback here
 
@@ -295,7 +295,7 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
             with open("/home/pi/Desktop/PlayedVideos", "a") as f:
                 f.write(url_line)
             break
-
+    browser.close() # Now that you set your like for the video, close it
 
 
 

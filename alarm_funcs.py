@@ -277,9 +277,10 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
 
     print("\nAlaram brought to you this morning by ", firstName, " ", lastName, "\n")
 
+    # Put in additional feedback here
+
+    print("\nWould you like to favorite the video?\n")
     while True:
-        # Put additional input here
-        print("\nWould you like to favorite the video?\n")
         if not GPIO.input(alarm_time_up):
             # Alarm was favorited
             print("\nAlarm Placed in FavoritedVideos!\n")

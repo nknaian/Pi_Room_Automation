@@ -152,13 +152,13 @@ class ATime:
 '''
 
 def get_all_alarm_times(alarm_time):
-    heater_time = ATime(alarm_time.TimeString, "sub", 5, "min")
+    heater_time = ATime(alarm_time.TimeString, "sub", 1, "min")
     heater_off_time = ATime(alarm_time.TimeString, "add", 30, "min")
     return heater_time, heater_off_time
 
 def pick_random_url_from_file():
     # Pick random url
-    with open("/home/pi/Desktop/Random_urls") as f:
+    with open("/home/pi/Desktop/test_urls") as f:
         urls = f.readlines()
     random.seed()
     rand_url_index = random.randint(0, len(urls) - 1)
@@ -177,7 +177,7 @@ def pick_random_url_from_file():
 
     # Delete url_line from "Random_url"
     iterator = 0
-    with open("/home/pi/Desktop/Random_urls", "w") as f_source:
+    with open("/home/pi/Desktop/test_urls", "w") as f_source:
         for i in range(0, len(urls)):
             if i == rand_url_index:
                 pass
@@ -188,22 +188,24 @@ def pick_random_url_from_file():
 
 def play_youtube_video(url):
     subprocess.Popen("amixer cset numid=3 1", shell=True)
-    #webbrowser.open(url)
+    subprocess.Popen("amixer cset numid=1 50%", shell=True) # Set volume to 0 to start
+
+    # Open instance of firefox and maximize window
     browser = webdriver.Firefox()
     browser.maximize_window()
+
+    # log in to youtube so I can watch 18+ videos
+    driver.get('https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Fhl%3Den%26feature%3Dcomment%26app%3Ddesktop%26next%3D%252Fall_comments%253Fv%253DLAr6oAKieHk%26action_handle_signin%3Dtrue&uilel=3&service=youtube&passive=true&hl=en')
+    driver.find_element_by_id('Email').send_keys('snoozinforabruisin@gmail.com')
+    driver.find_element_by_id('next').click()
+    driver.find_element_by_id('Passwd').send_keys('snoozegotshrekt')
+    driver.find_element_by_id('signIn').click()
+
     browser.get(url)
-    #subprocess.Popen("xdotool mousemove 1700 900 click 1", shell=True) #click to wake up screen
-    '''
-    time.sleep(30)
-    subprocess.Popen("xdotool mousemove 1000 500 click 1", shell=True) #click on play video
-    time.sleep(5)
-    subprocess.Popen("xdotool mousemove 485 610 click 1", shell=True) #Click pause
-    time.sleep(40)
-    subprocess.Popen("xdotool mousemove 485 610 click 1", shell=True) #Click play
-    time.sleep(5)
-    #subprocess.Popen("xdotool mousemove 1270 610 click 1", shell=True) #Click on full screen
-    time.sleep(5)
-    '''
+    time.sleep(5) # Give url a few seconds to open
+    subprocess.Popen("amixer cset numid=1 95%", shell=True) # Set volume to high end
+
+    return browser
 
 def run_send_email_and_monitor(scriptWithArgs):
     try:
@@ -230,7 +232,7 @@ def run_script_and_monitor(scriptWithArgs): #This function takes the script with
             print(out)
 
 
-def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down): # This function takes 5 min
+def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down, browser, firstName, lastName): # This function takes 5 min at the most
     elapsed_alarm_time = 0
     wake_up_time = 1000 #just making it a number much greater than 300
     wasFavorited = False
@@ -262,11 +264,23 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
 
         elif (current_x_line != initial_x_line) and (wake_up_time > elapsed_alarm_time):
             wake_up_time = elapsed_alarm_time
+            subprocess.Popen("amixer cset numid=1 85%", shell=True) # Set volume to 50%
+            break
 
         elif (current_y_line != initial_y_line) and (wake_up_time > elapsed_alarm_time):
             wake_up_time = elapsed_alarm_time
+            subprocess.Popen("amixer cset numid=1 85%", shell=True) # Set volume to 50%
+            break
 
-        elif not GPIO.input(alarm_time_up):
+        elapsed_alarm_time += 1
+        time.sleep(1)
+
+    print("\nAlaram brought to you this morning by ", firstName, " ", lastName, "\n")
+
+    while True:
+        # Put additional input here
+        print("\nWould you like to favorite the video?\n")
+        if not GPIO.input(alarm_time_up):
             # Alarm was favorited
             print("\nAlarm Placed in FavoritedVideos!\n")
             wasFavorited = True
@@ -281,8 +295,8 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
                 f.write(url_line)
             break
 
-        elapsed_alarm_time += 1
-        time.sleep(1)
+
+
 
     if didFail:
         wake_up_time = "over 5 minutes"

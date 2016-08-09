@@ -195,11 +195,11 @@ def play_youtube_video(url):
     browser.maximize_window()
 
     # log in to youtube so I can watch 18+ videos
-    driver.get('https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Fhl%3Den%26feature%3Dcomment%26app%3Ddesktop%26next%3D%252Fall_comments%253Fv%253DLAr6oAKieHk%26action_handle_signin%3Dtrue&uilel=3&service=youtube&passive=true&hl=en')
-    driver.find_element_by_id('Email').send_keys('snoozinforabruisin@gmail.com')
-    driver.find_element_by_id('next').click()
-    driver.find_element_by_id('Passwd').send_keys('snoozegotshrekt')
-    driver.find_element_by_id('signIn').click()
+    browser.get('https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Fhl%3Den%26feature%3Dcomment%26app%3Ddesktop%26next%3D%252Fall_comments%253Fv%253DLAr6oAKieHk%26action_handle_signin%3Dtrue&uilel=3&service=youtube&passive=true&hl=en')
+    browser.find_element_by_id('Email').send_keys('snoozinforabruisin@gmail.com')
+    browser.find_element_by_id('next').click()
+    browser.find_element_by_id('Passwd').send_keys('snoozegotshrekt')
+    browser.find_element_by_id('signIn').click()
 
     browser.get(url)
     time.sleep(5) # Give url a few seconds to open

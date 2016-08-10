@@ -237,4 +237,10 @@ def main():
         print("\nUnrecognized email version...\n")
         input()
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as error:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fileName = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        lineNumber = exc_tb.tb_lineno
+        print("\nAn error of type ", type(error), " was encounterd on line ", lineNumber, " in ", fileName, ":\n\n", error, "\n\n")

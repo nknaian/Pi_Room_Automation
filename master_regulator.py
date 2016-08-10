@@ -319,8 +319,8 @@ parser.add_argument('-p', dest="process",
 
 args = parser.parse_args
 
-#If a timeout exception occurs, just start the master regulator again
-
+# Send an error message and require input if master_regulator encounters
+# unhandled erros 4 times (it's not a fluke thing)
 unhandledErrorCounter = 0
 while True:
     try:

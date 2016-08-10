@@ -275,10 +275,10 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
         elapsed_alarm_time += 1
         time.sleep(1)
 
-    print("\nAlaram brought to you this morning by ", firstName, lastName, "\n")
+    print("\n\nAlaram brought to you this morning by ", firstName, lastName, "\n\n")
 
     # Enter additional feedback on the video if you have any
-    inputString = "Do you have any additional feedback for " + firstName + " on the video?"
+    inputString = "\n\nDo you have any additional feedback for " + firstName + " on the video?\n\n"
     additional_feedback = input(inputString)
 
     print("\nWould you like to favorite the video?\n")

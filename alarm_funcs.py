@@ -278,7 +278,8 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
     print("\nAlaram brought to you this morning by ", firstName, lastName, "\n")
 
     # Enter additional feedback on the video if you have any
-    additional_feedback = input("Do you have any additional feedback for ", firstName, " on the video?")
+    inputString = "Do you have any additional feedback for " + firstName + " on the video?"
+    additional_feedback = input(inputString)
 
     print("\nWould you like to favorite the video?\n")
     while True:

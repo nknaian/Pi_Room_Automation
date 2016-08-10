@@ -152,13 +152,13 @@ class ATime:
 '''
 
 def get_all_alarm_times(alarm_time):
-    heater_time = ATime(alarm_time.TimeString, "sub", 5, "min")
+    heater_time = ATime(alarm_time.TimeString, "sub", 1, "min")
     heater_off_time = ATime(alarm_time.TimeString, "add", 30, "min")
     return heater_time, heater_off_time
 
 def pick_random_url_from_file():
     # Pick random url
-    with open("/home/pi/Desktop/Random_urls") as f:
+    with open("/home/pi/Desktop/test_urls") as f:
         urls = f.readlines()
     random.seed()
     rand_url_index = random.randint(0, len(urls) - 1)
@@ -177,7 +177,7 @@ def pick_random_url_from_file():
 
     # Delete url_line from "Random_url"
     iterator = 0
-    with open("/home/pi/Desktop/Random_urls", "w") as f_source:
+    with open("/home/pi/Desktop/test_urls", "w") as f_source:
         for i in range(0, len(urls)):
             if i == rand_url_index:
                 pass
@@ -277,7 +277,8 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
 
     print("\nAlaram brought to you this morning by ", firstName, lastName, "\n")
 
-    # Put in additional feedback here
+    # Enter additional feedback on the video if you have any
+    additional_feedback = input("Do you have any additional feedback for ", firstName, " on the video?")
 
     print("\nWould you like to favorite the video?\n")
     while True:
@@ -304,7 +305,7 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
     else:
         wake_up_time = str(wake_up_time) + " seconds"
 
-    return wake_up_time, wasFavorited, didFail
+    return wake_up_time, wasFavorited, didFail, additional_feedback
 
 def change_alarm_manual(alarm_time,alarm_time_up, alarm_time_down, hour_increment, min_increment):
 

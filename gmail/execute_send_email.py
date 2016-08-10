@@ -38,6 +38,8 @@ try:
                         help='boolean argument to pass whether the video was favorited')
     email_parser.add_argument('-F', '--failed', dest='did_fail', required=False,
                         help='boolean argument to pass whether the video failed')
+    email_parser.add_argument('-a', '--additional_feedback', dest='additional_feedback', required=False,
+                        help='string entered by user in response to the video')
     #### End args for send_alarm_notification() ####
 
     args = vars(flags.parse_args())
@@ -51,6 +53,7 @@ try:
     wake_up_time = args['wake_up_time']
     was_favorited = args['was_favorited']
     did_fail = args['did_fail']
+    additional_feedback = args['additional_feedback']
     #### End args for send_alarm_notification() ####
 except ImportError:
     flags = None
@@ -182,8 +185,9 @@ def send_alarm_notification():
             favorited_part = "And Nick favorited your video!"
         else:
             favorited_part = ""
+        additional_feedback_part = "\nNick's reaction to the video: " + additional_feedback + "\n"
         end_part = "\n\nRegards,\nSnoozinforabruisin"
-        message_text = addressing_part + url_part + wake_up_time_part + favorited_part + end_part
+        message_text = addressing_part + url_part + wake_up_time_part + favorited_part + additional_feedback_part + end_part
 
     elif did_fail == "True":
         subject = "Oops...one of your alarms didn't wake Nick up"

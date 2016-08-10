@@ -112,7 +112,7 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
         if current_time.TimeString == alarm_time.TimeString:
             url_line, url, firstName, lastName, email = pick_random_url_from_file()
             browser = play_youtube_video(url)
-            wake_up_time, wasFavorited, didFail = monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down, browser, firstName, lastName)
+            wake_up_time, wasFavorited, didFail, additional_feedback = monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_down, browser, firstName, lastName)
 
             #Create string vresions of booleans:
             str_wasFavorited = str(wasFavorited)
@@ -126,7 +126,7 @@ def alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on):
             #Send email here
             if email != "???":
                 print("Sending email")
-                run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendAlarmNotification", "-e", email, "-n", firstName, "-u", url, "-t", wake_up_time, "-f", str_wasFavorited, "-F", str_didFail])
+                run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendAlarmNotification", "-e", email, "-n", firstName, "-u", url, "-t", wake_up_time, "-f", str_wasFavorited, "-F", str_didFail, "-a", additional_feedback])
             else:
                 print("no email link found")
         is_heater_on = Update_heater_state(is_heater_on, current_time.TimeString)

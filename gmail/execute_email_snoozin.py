@@ -175,6 +175,9 @@ def poll_for_urls():
     with open(urlTextFile, "a") as myFile:
         iterator = 0
         for link in videos:
+            if "=3D" in link:
+                link.replace("=3D", "=")
+                print("\nJust fixed a \'3D\'\n")
             if empty == True and iterator == 0:
                 pass
             else:

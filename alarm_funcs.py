@@ -164,7 +164,6 @@ def pick_random_url_from_file():
     rand_url_index = random.randint(0, len(urls) - 1)
     url_line = urls[rand_url_index]
     if ", " in url_line:
-        url_line = "sdfklssdfdsfsd, joe ummmmm huhhh smo <thisismyemail>"
         url = url_line.split(", ")[0]
         nameAndEmail = url_line.split(", ")[1]
         numSpaces = nameAndEmail.count(" ")

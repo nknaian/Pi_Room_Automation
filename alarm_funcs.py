@@ -205,11 +205,15 @@ def play_youtube_video(url):
     browser = webdriver.Firefox()
     browser.maximize_window()
 
+    # retrieve password:
+    with open("/home/pi/Desktop/password", "r") as f:
+        password = f.readline()
+
     # log in to youtube so I can watch 18+ videos
     browser.get('https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Fhl%3Den%26feature%3Dcomment%26app%3Ddesktop%26next%3D%252Fall_comments%253Fv%253DLAr6oAKieHk%26action_handle_signin%3Dtrue&uilel=3&service=youtube&passive=true&hl=en')
     browser.find_element_by_id('Email').send_keys('snoozinforabruisin@gmail.com')
     browser.find_element_by_id('next').click()
-    browser.find_element_by_id('Passwd').send_keys('snoozegotshrekt')
+    browser.find_element_by_id('Passwd').send_keys(password)
     browser.find_element_by_id('signIn').click()
 
     browser.get(url)

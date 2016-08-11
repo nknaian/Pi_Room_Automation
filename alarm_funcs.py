@@ -164,11 +164,22 @@ def pick_random_url_from_file():
     rand_url_index = random.randint(0, len(urls) - 1)
     url_line = urls[rand_url_index]
     if ", " in url_line:
+        url_line = "sdfklssdfdsfsd, joe ummmmm huhhh smo <thisismyemail>"
         url = url_line.split(", ")[0]
         nameAndEmail = url_line.split(", ")[1]
-        firstName = nameAndEmail.split(" ", 5)[0]
-        lastName = nameAndEmail.split(" ", 5)[1]
-        email = nameAndEmail.split(" ", 5)[2]
+        numSpaces = nameAndEmail.count(" ")
+        email = nameAndEmail.split(" ", 6)[numSpaces]
+        lastName = nameAndEmail.split(" ", 6)[numSpaces - 1]
+
+        # First name will be all words in between comma and last name
+        firstName = ""
+        for i in range(0, numSpaces - 1):
+            firstName += nameAndEmail.split(" ", 6)[i]
+            if i == numSpaces - 2:
+                pass
+            else:
+                firstName += " "
+
     else:
         url = url_line
         firstName = "???"

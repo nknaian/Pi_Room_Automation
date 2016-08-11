@@ -152,13 +152,13 @@ class ATime:
 '''
 
 def get_all_alarm_times(alarm_time):
-    heater_time = ATime(alarm_time.TimeString, "sub", 1, "min")
+    heater_time = ATime(alarm_time.TimeString, "sub", 5, "min")
     heater_off_time = ATime(alarm_time.TimeString, "add", 30, "min")
     return heater_time, heater_off_time
 
 def pick_random_url_from_file():
     # Pick random url
-    with open("/home/pi/Desktop/test_urls") as f:
+    with open("/home/pi/Desktop/Random_urls") as f:
         urls = f.readlines()
     random.seed()
     rand_url_index = random.randint(0, len(urls) - 1)
@@ -187,7 +187,7 @@ def pick_random_url_from_file():
 
     # Delete url_line from "Random_url"
     iterator = 0
-    with open("/home/pi/Desktop/test_urls", "w") as f_source:
+    with open("/home/pi/Desktop/Random_urls", "w") as f_source:
         for i in range(0, len(urls)):
             if i == rand_url_index:
                 pass

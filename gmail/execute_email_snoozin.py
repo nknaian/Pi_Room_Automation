@@ -325,4 +325,3 @@ except Exception as error:
     fileName = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     lineNumber = exc_tb.tb_lineno
     print("\nWe're in execute snoozin! An error of type ", type(error), " was encounterd on line ", lineNumber, " in ", fileName, ":\n\n", error, "\n\n")
-    run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendErrorMessage", "-b", str(error)])

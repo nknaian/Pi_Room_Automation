@@ -240,8 +240,6 @@ def poll_for_alarm_requests():
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('gmail', 'v1', http=http)
 
-    raise ValueError("This is an intentional error")
-
     # Search inbox for message we're looking for and create MimeMessage of object
     query = 'subject:Alarm AND is:unread AND in:inbox'
     messages_that_match = mail.ListMessagesMatchingQuery(service, "me", query)

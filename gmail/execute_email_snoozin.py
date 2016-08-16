@@ -319,8 +319,10 @@ def main():
 
 
 try:
+    print("in try")
     main()
 except Exception as error:
+    print("in except")
     exc_type, exc_obj, exc_tb = sys.exc_info()
     fileName = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     lineNumber = exc_tb.tb_lineno

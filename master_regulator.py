@@ -325,7 +325,6 @@ unhandledErrorCounter = 0
 while True:
     try:
         master_regulator()
-    '''
     except Exception as error:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fileName = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -338,4 +337,3 @@ while True:
             unhandledErrorCounter = 0
         else:
             unhandledErrorCounter += 1
-    '''

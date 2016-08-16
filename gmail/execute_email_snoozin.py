@@ -239,6 +239,8 @@ def poll_for_alarm_requests():
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('gmail', 'v1', http=http)
 
+    raise ValueError("This is an intentional error")
+
     # Search inbox for message we're looking for and create MimeMessage of object
     query = 'subject:Alarm AND is:unread AND in:inbox'
     messages_that_match = mail.ListMessagesMatchingQuery(service, "me", query)
@@ -315,11 +317,11 @@ def main():
         input()
 
 
-if __name__ == '__main__':
-    try:
-        main()
-    except Exception as error:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fileName = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        lineNumber = exc_tb.tb_lineno
-        print("\nAn error of type ", type(error), " was encounterd on line ", lineNumber, " in ", fileName, ":\n\n", error, "\n\n")
+try:
+    main()
+except Exception as error:
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    fileName = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    lineNumber = exc_tb.tb_lineno
+    print("\nWe're in execute snoozin! An error of type ", type(error), " was encounterd on line ", lineNumber, " in ", fileName, ":\n\n", error, "\n\n")
+    run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendErrorMessage", "-b", str(error)])

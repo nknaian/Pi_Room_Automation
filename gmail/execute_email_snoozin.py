@@ -318,9 +318,8 @@ def main():
         input()
 
 
-try:
-    print("in try")
-    main()
+main()
+
 except Exception as error:
     print("in except")
     exc_type, exc_obj, exc_tb = sys.exc_info()

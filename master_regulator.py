@@ -319,21 +319,8 @@ parser.add_argument('-p', dest="process",
 
 args = parser.parse_args
 
-# Send an error message and require input if master_regulator encounters
-# unhandled erros 4 times (it's not a fluke thing)
-unhandledErrorCounter = 0
 while True:
     try:
         master_regulator()
     except Exception as error:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fileName = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        lineNumber = exc_tb.tb_lineno
-        print("\nAn error of type ", type(error), " was encounterd on line ", lineNumber, " in ", fileName, ":\n\n", error, "\n\n")
-        if unhandledErrorCounter >= 4:
-            full_error_message = "Unhandled exceptions have been encountered 4 times...must manually restart the function or fix the problem."
-            run_send_email_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_send_email.py", "email", "-v", "SendErrorMessage", "-b", full_error_message])
-            input("Unhandled errors have been encounterd 4 times...Press Enter to run master_regulator again...\n\n")
-            unhandledErrorCounter = 0
-        else:
-            unhandledErrorCounter += 1
+        print("\n" + error + "\n")

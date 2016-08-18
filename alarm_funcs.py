@@ -295,30 +295,29 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
     inputString = "\n\nDo you have any additional feedback for " + firstName + " on the video?\n\n"
     additional_feedback = input(inputString)
 
-    print("\nWould you like to favorite the video?\n")
-    while True:
-        if not GPIO.input(alarm_time_up):
-            # Alarm was favorited
-            print("\nAlarm Placed in FavoritedVideos!\n")
-            wasFavorited = True
-            with open("/home/pi/Desktop/FavoritedVideos", "a") as f:
-                f.write(url_line)
-            break
-
-        elif not GPIO.input(alarm_time_down):
-            # Alarm worked, not a favorite though
-            print("\nAlarm Placed in PlayedVideos\n")
-            with open("/home/pi/Desktop/PlayedVideos", "a") as f:
-                f.write(url_line)
-            break
-    browser.close() # Now that you set your like for the video, close it
-
-
-
     if didFail:
         wake_up_time = "over 5 minutes"
-    else:
+    else: # only give favoriting option if video didn't fail
         wake_up_time = str(wake_up_time) + " seconds"
+
+        print("\nWould you like to favorite the video?\n")
+        while True:
+            if not GPIO.input(alarm_time_up):
+                # Alarm was favorited
+                print("\nAlarm Placed in FavoritedVideos!\n")
+                wasFavorited = True
+                with open("/home/pi/Desktop/FavoritedVideos", "a") as f:
+                    f.write(url_line)
+                break
+
+            elif not GPIO.input(alarm_time_down):
+                # Alarm worked, not a favorite though
+                print("\nAlarm Placed in PlayedVideos\n")
+                with open("/home/pi/Desktop/PlayedVideos", "a") as f:
+                    f.write(url_line)
+                break
+
+    browser.close() # Now that you set your like for the video, close it
 
     return wake_up_time, wasFavorited, didFail, additional_feedback
 

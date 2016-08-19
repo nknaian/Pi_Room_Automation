@@ -323,4 +323,5 @@ while True:
     try:
         master_regulator()
     except Exception as error:
-        print("\n" + error + "\n")
+        str_error = str(error)
+        print("In master_regulator an error was found:\n" + str_error + "\n")

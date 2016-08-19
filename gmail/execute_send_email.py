@@ -244,7 +244,5 @@ if __name__ == '__main__':
     try:
         main()
     except Exception as error:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fileName = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        lineNumber = exc_tb.tb_lineno
-        print("\nAn error of type ", type(error), " was encounterd on line ", lineNumber, " in ", fileName, ":\n\n", error, "\n\n")
+        str_error = str(error)
+        print("In send email an error was found:\n" + str_error + "\n")

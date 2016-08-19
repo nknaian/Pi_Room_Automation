@@ -315,5 +315,9 @@ def main():
         print("\nUnrecognized polling mode...\n")
         input()
 
-# Run main (I don't understand why exceptions don't work when this file is called...)
-main()
+if __name__ == '__main__':
+    try:
+        main()
+    except Exception as error:
+        str_error = str(error)
+        print("In email snoozin an error was found:\n" + str_error + "\n")

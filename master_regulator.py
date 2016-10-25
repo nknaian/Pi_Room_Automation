@@ -320,7 +320,7 @@ parser.add_argument('-p', dest="process",
 args = parser.parse_args
 
 while True:
-    try:
+try:
         master_regulator()
     except Exception as error:
         str_error = str(error)

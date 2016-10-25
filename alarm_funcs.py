@@ -152,7 +152,7 @@ class ATime:
 '''
 
 def get_all_alarm_times(alarm_time):
-    heater_time = ATime(alarm_time.TimeString, "sub", 5, "min")
+    heater_time = ATime(alarm_time.TimeString, "sub", 1, "hour")
     heater_off_time = ATime(alarm_time.TimeString, "add", 30, "min")
     return heater_time, heater_off_time
 
@@ -266,13 +266,8 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
         current_y_line = out.split(b'\n', 10)[1]
 
         if elapsed_alarm_time > 300: # When mic circuit created use that instead of timing to figure if an alarm isn't being played
-            # Alarm didn't work...I didn't get up
-            print("\nAlarm placed in FailedVideos :/\n")
+            wake_up_time = elapsed_alarm_time
             didFail = True
-            with open("/home/pi/Desktop/FailedVideos", "a") as f:
-                f.write(url_line)
-            subprocess.Popen("omxplayer -o local /home/pi/Desktop/staring_at_the_sun.mp3", shell=True) #the default really should be an annoying alarm...figure that out...
-            time.sleep(5)
             break
 
         elif (current_x_line != initial_x_line) and (wake_up_time > elapsed_alarm_time):
@@ -288,16 +283,21 @@ def monitor_alarm_and_place_used_url(url_line, url, alarm_time_up, alarm_time_do
         elapsed_alarm_time += 1
         time.sleep(1)
 
-    print("\n\nAlaram brought to you this morning by ", firstName, lastName, "\n\n")
-
-    # Enter additional feedback on the video if you have any
-    inputString = "\n\nDo you have any additional feedback for " + firstName + " on the video?\n\n"
-    additional_feedback = input(inputString)
-
     if didFail:
-        wake_up_time = "over 5 minutes"
+        # Alarm didn't work...I didn't get up
+        print("\nAlarm placed in FailedVideos :/\n")
+        with open("/home/pi/Desktop/FailedVideos", "a") as f:
+            f.write(url_line)
+        subprocess.Popen("omxplayer -o local /home/pi/Desktop/staring_at_the_sun.mp3", shell=True) #the default really should be an annoying alarm...figure that out...
+
     else: # only give favoriting option if video didn't fail
         wake_up_time = str(wake_up_time) + " seconds"
+
+        print("\n\nAlaram brought to you this morning by ", firstName, lastName, "\n\n")
+
+        # Enter additional feedback on the video if you have any
+        inputString = "\n\nDo you have any additional feedback for " + firstName + " on the video?\n\n"
+        additional_feedback = input(inputString)
 
         print("\nWould you like to favorite the video?\n")
         while True:

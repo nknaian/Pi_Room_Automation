@@ -322,6 +322,6 @@ args = parser.parse_args
 while True:
 try:
         master_regulator()
-    except Exception as error:
-        str_error = str(error)
-        print("In master_regulator an error was found:\n" + str_error + "\n")
+except Exception as error:
+    str_error = str(error)
+    print("In master_regulator an error was found:\n" + str_error + "\n")

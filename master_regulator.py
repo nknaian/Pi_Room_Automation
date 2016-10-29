@@ -55,9 +55,9 @@ GPIO.setup(alarm_time_down, GPIO.IN)
 
 
 if GPIO.input(temp_sense):
-    print("\nTemp above 63 degrees Fahrenheit")
+    print("\nTemp above 68 degrees Fahrenheit")
 else:
-    print("\nTemp below 63 degress Fahrenheit")
+    print("\nTemp below 68 degress Fahrenheit")
 
 
 

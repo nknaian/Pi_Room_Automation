@@ -1,0 +1,3 @@
+Currently the threshold temperature to turn on the heater is 68.2 degrees faherheit
+-> This is got the by using a 10k resistor from power to + terminal of comparitor, and a 3.9k in parallel with a 470 from + term comparitor to ground
+-> If the room doesn't get warm enough, try increasing the 3.9k resistor

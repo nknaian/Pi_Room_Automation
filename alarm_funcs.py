@@ -152,8 +152,8 @@ class ATime:
 '''
 
 def get_all_alarm_times(alarm_time):
-    heater_time = ATime(alarm_time.TimeString, "sub", 1, "hour")
-    heater_off_time = ATime(alarm_time.TimeString, "add", 30, "min")
+    heater_time = ATime(alarm_time.TimeString, "sub", 2, "hour")
+    heater_off_time = ATime(alarm_time.TimeString, "add", 45, "min")
     return heater_time, heater_off_time
 
 def pick_random_url_from_file():

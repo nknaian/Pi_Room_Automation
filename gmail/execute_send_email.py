@@ -82,7 +82,7 @@ def get_credentials():
     store = oauth2client.file.Storage(credential_path)
     credentials = store.get()
     #Uncomment the following if you want to change permissions
-    credentials.invalid = True
+    #credentials.invalid = True
     #End my addition
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)

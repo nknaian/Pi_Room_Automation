@@ -158,14 +158,14 @@ def master_regulator():
     time.sleep(1)
 
     #Testing alarm_func: (comment out block during normal operation)
-    '''
+
     now = datetime.datetime.now()
     current_time = ATime(now.strftime("%H:%M"))
     heater_time = ATime(current_time.TimeString)
     alarm_time = ATime(heater_time.TimeString, "add", 1, "min")
     heater_off_time = ATime(alarm_time.TimeString, "add", 5, "min")
     alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on)
-    '''#end alarm_func testing
+    #end alarm_func testing
 
     #Derive other alarm times
     heater_time, heater_off_time = get_all_alarm_times(alarm_time)
@@ -227,11 +227,11 @@ def master_regulator():
             print("\nHeater turned off because I am not here")
 
         #Check for new urls from gmail
-        run_script_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py", "poll", "-m", "AddUrls"])
+        #run_script_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py", "poll", "-m", "AddUrls"])
 
 
         #Check for new alarm requests from gmail
-        run_script_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py", "poll", "-m", "AlarmRequest"])
+        #run_script_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py", "poll", "-m", "AlarmRequest"])
 
         with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/alarm_state_buffer", "r") as f_read:
             text_state = f_read.readlines()
@@ -251,7 +251,7 @@ def master_regulator():
             # result (can store text of email in the text buffer)
 
         #Check for new heater requests from gmail
-        run_script_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py", "poll", "-m", "HeaterRequest"])
+        #run_script_and_monitor(["python2", "/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/execute_email_snoozin.py", "poll", "-m", "HeaterRequest"])
 
         with open("/home/pi/Desktop/Git_repo/Pi_Room_Automation/gmail/heater_state_buffer", "r") as f_read:
             text_state = f_read.readlines()

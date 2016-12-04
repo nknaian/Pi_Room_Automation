@@ -17,6 +17,9 @@ import send_email as mail
 
 try:
     import argparse
+
+    print ("Current folder: " + os.getcwd())
+
     flags = argparse.ArgumentParser(parents=[tools.argparser])#parse_args() <-- I changed this...change back if things are getting weird
     subparsers = flags.add_subparsers(help='prewritten emails to send')
     email_parser = subparsers.add_parser("email")

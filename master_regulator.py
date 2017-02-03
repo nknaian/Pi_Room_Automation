@@ -1,4 +1,9 @@
  #!python3
+
+
+#This is where I was before I took out lots of functionality bec of gmail problems
+
+
 #How I got this setup...
 '''
 Open command prompt.

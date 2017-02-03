@@ -163,14 +163,14 @@ def master_regulator():
     time.sleep(1)
 
     #Testing alarm_func: (comment out block during normal operation)
-    '''
+    
     now = datetime.datetime.now()
     current_time = ATime(now.strftime("%H:%M"))
     heater_time = ATime(current_time.TimeString)
     alarm_time = ATime(heater_time.TimeString, "add", 1, "min")
     heater_off_time = ATime(alarm_time.TimeString, "add", 5, "min")
     alarm_func(heater_time, alarm_time, heater_off_time, is_heater_on)
-    '''#end alarm_func testing
+    #end alarm_func testing
 
     #Derive other alarm times
     heater_time, heater_off_time = get_all_alarm_times(alarm_time)

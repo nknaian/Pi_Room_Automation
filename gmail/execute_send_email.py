@@ -59,7 +59,7 @@ except ImportError:
     flags = None
 
 SCOPES = 'https://www.googleapis.com/auth/gmail.modify'
-CLIENT_SECRET_FILE = 'client_secret_alarm_control.json'
+CLIENT_SECRET_FILE = 'C:\\Users\\nickk_000\\Desktop\\forRaz\\Pi_Room_Automation\\gmail\\client_secret_alarm_control.json'
 APPLICATION_NAME = 'Gmail API Python Quickstart'
 
 

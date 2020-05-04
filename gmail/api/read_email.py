@@ -20,11 +20,11 @@ def GetMessage(service, user_id, msg_id):
   try:
     message = service.users().messages().get(userId=user_id, id=msg_id).execute()
 
-    print 'Message snippet: %s' % message['snippet']
+    print('Message snippet: %s' % message['snippet'])
 
     return message
-  except errors.HttpError, error:
-    print 'An error occurred: %s' % error
+  except errors.HttpError as error:
+    print('An error occurred: %s' % error)
 
 
 def GetMimeMessage(service, user_id, msg_id):
@@ -43,18 +43,15 @@ def GetMimeMessage(service, user_id, msg_id):
     message = service.users().messages().get(userId=user_id, id=msg_id,
                                              format='raw').execute()
 
-    #print 'Message snippet: %s' % message['snippet']
+    #print('Message snippet: %s' % message['snippet'])
 
-    msg_str = base64.urlsafe_b64decode(message['raw'].encode('ASCII'))
-    # My addition
-   
-        
-    # end my addition
+    msg_str_bytes = base64.urlsafe_b64decode(message['raw'].encode('ASCII'))
+    msg_str = msg_str_bytes.decode("utf-8")
     mime_msg = email.message_from_string(msg_str)
 
     return mime_msg
-  except errors.HttpError, error:
-    print 'An error occurred: %s' % error
+  except errors.HttpError as error:
+    print('An error occurred: %s' % error)
 
 
 
@@ -92,8 +89,8 @@ def ListMessagesMatchingQuery(service, user_id, query=''):
       messages.extend(response['messages'])
 
     return messages
-  except errors.HttpError, error:
-    print 'An error occurred: %s' % error
+  except errors.HttpError as error:
+    print('An error occurred: %s' % error)
 
 
 def ListMessagesWithLabels(service, user_id, label_ids=[]):
@@ -125,5 +122,5 @@ def ListMessagesWithLabels(service, user_id, label_ids=[]):
       messages.extend(response['messages'])
 
     return messages
-  except errors.HttpError, error:
-    print 'An error occurred: %s' % error
+  except errors.HttpError as error:
+    print('An error occurred: %s' % error)

@@ -1,5 +1,4 @@
 from __future__ import print_function
-import httplib2
 import os
 import base64
 from bs4 import BeautifulSoup
@@ -8,71 +7,15 @@ import time
 import shlex
 import sys
 
-from apiclient import discovery
-import oauth2client
-from oauth2client import client
-from oauth2client import tools
-
-#import functions from other python files
-import read_email as mail
-
-############# NOTE: ###############
-# If originally created gmail api access on another computer,
-# need to add the argument --noauth_local_webserver to the python file
-# after setting credentials.invalid equal
-
-
-
 try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser])#parse_args() <-- I changed this...change back if things are getting weird
-    subparsers = flags.add_subparsers(help='types poll_mode')
-    poll_parser = subparsers.add_parser("poll")
-    poll_parser.add_argument('-m', '--mode', dest='poll_mode', required=True,
-                        help='Parse the polling mode')
-    args = vars(flags.parse_args())
-    poll_mode = args['poll_mode']
-except ImportError:
-    flags = None
+    import gmail.api.creds as creds
+    import gmail.api.read_email as mail
+except:
+    # if being run as main...
+    import api.creds as creds
+    import api.read_email as mail
 
 # Set up subparser for polling type
-
-
-SCOPES = 'https://www.googleapis.com/auth/gmail.modify'
-CLIENT_SECRET_FILE = 'client_secret_alarm_control.json'
-APPLICATION_NAME = 'Gmail API Python Quickstart'
-
-
-def get_credentials():
-    """Gets valid user credentials from storage.
-
-    If nothing has been stored, or if the stored credentials are invalid,
-    the OAuth2 flow is completed to obtain the new credentials.
-
-    Returns:
-        Credentials, the obtained credential.
-    """
-    home_dir = os.path.expanduser('~')
-    credential_dir = os.path.join(home_dir, '.credentials')
-    if not os.path.exists(credential_dir):
-        os.makedirs(credential_dir)
-    credential_path = os.path.join(credential_dir,
-                                   'gmail-python-quickstart.json')
-
-    store = oauth2client.file.Storage(credential_path)
-    credentials = store.get()
-    #Uncomment the following if you want to change permissions
-    #credentials.invalid = True
-    #End my addition
-    if not credentials or credentials.invalid:
-        flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
-        flow.user_agent = APPLICATION_NAME
-        if flags:
-            credentials = tools.run_flow(flow, store, flags)
-        else: # Needed only for compatibility with Python 2.6
-            credentials = tools.run(flow, store)
-        print('Storing credentials to ' + credential_path)
-    return credentials
 
 # Function to create a list of the urls from the email. Now with some protections so Berj doesn't DOS me.
 def FilterMessageBody(messageBody, videoList, sender, urlTextFile, PlayedVideosFile):
@@ -129,17 +72,14 @@ def FilterMessageBody(messageBody, videoList, sender, urlTextFile, PlayedVideosF
                 else:
                     listIndex += 1 # only increment the list index if the video is not deleted (otherwise the index will shift with the deleted video)
 
-
-
 def poll_for_urls():
     """Checks inbox for message with certain subject line, prints a snippet of the message
 
     Creates a Gmail API service object and then querys for the latest of a specific email, gets
     that email, then prints the list of urls found (only urls are detected)
     """
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('gmail', 'v1', http=http)
+    service = creds.get_gmail_service()
+
     # Search inbox for message we're looking for and create MimeMessage of object
     query = 'subject:AddUrls AND is:unread AND in:inbox'
     messages_that_match = mail.ListMessagesMatchingQuery(service, "me", query)
@@ -198,9 +138,8 @@ def poll_for_heater_requests():
     Creates a Gmail API service object and then querys for the latest of a specific email, gets
     that email, then prints the list of urls found (only urls are detected)
     """
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('gmail', 'v1', http=http)
+
+    service = creds.get_gmail_service()
 
     # Search inbox for message we're looking for and create MimeMessage of object
     query = 'subject:Heater AND is:unread AND in:inbox'
@@ -236,9 +175,8 @@ def poll_for_alarm_requests():
     Creates a Gmail API service object and then querys for the latest of a specific email, gets
     that email, then prints the list of urls found (only urls are detected)
     """
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('gmail', 'v1', http=http)
+
+    service = creds.get_gmail_service()
 
     # Search inbox for message we're looking for and create MimeMessage of object
     query = 'subject:Alarm AND is:unread AND in:inbox'
@@ -269,9 +207,8 @@ def poll_for_git_requests():
     Creates a Gmail API service object and then querys for the latest of a specific email, gets
     that email, then prints the list of urls found (only urls are detected)
     """
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('gmail', 'v1', http=http)
+
+    service = creds.get_gmail_service()
 
     # Search inbox for message we're looking for and create MimeMessage of object
     query = 'subject:GitRequest AND is:unread AND in:inbox'
@@ -301,7 +238,7 @@ def poll_for_git_requests():
         print("\nUnrecognized GitRequest...\n")
         input()
 
-def main():
+def main(poll_mode):
 
     if poll_mode == "AddUrls":
         poll_for_urls()
@@ -317,7 +254,20 @@ def main():
 
 if __name__ == '__main__':
     try:
-        main()
+        import argparse
+        flags = argparse.ArgumentParser()
+        subparsers = flags.add_subparsers(help='types poll_mode')
+        poll_parser = subparsers.add_parser("poll")
+        poll_parser.add_argument('-m', '--mode', dest='poll_mode', required=True,
+                            help='Parse the polling mode')
+        args = flags.parse_args()
+        poll_mode = args.poll_mode
+
+        main(poll_mode)
+
     except Exception as error:
+        import traceback
+        import sys
+        traceback.print_exc(file=sys.stdout)
         str_error = str(error)
         print("In email snoozin an error was found:\n" + str_error + "\n")

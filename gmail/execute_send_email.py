@@ -1,23 +1,19 @@
 from __future__ import print_function
-import httplib2
 import os
 
-from apiclient import discovery
-import oauth2client
-from oauth2client import client
-from oauth2client import tools
+try:
+    import gmail.api.creds as creds
+    import gmail.api.read_email as mail
+except:
+    # if being run as main...
+    import api.creds as creds
+    import api.read_email as mail
 
-#import functions from other python files
-import send_email as mail
 
-############# NOTE: ###############
-# If originally created gmail api access on another computer,
-# need to add the argument --noauth_local_webserver to the python file
-# after setting credentials.invalid equal
 
 try:
     import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser])#parse_args() <-- I changed this...change back if things are getting weird
+    flags = argparse.ArgumentParser()
     subparsers = flags.add_subparsers(help='prewritten emails to send')
     email_parser = subparsers.add_parser("email")
     email_parser.add_argument('-v', '--version', dest='email_version', required=True,
@@ -42,9 +38,9 @@ try:
                         help='string entered by user in response to the video')
     #### End args for send_alarm_notification() ####
 
-    args = vars(flags.parse_args())
-    email_version = args['email_version']
-    message_body = args['message_body']
+    args = flags.parse_args()
+    email_version = args.email_version
+    message_body = args.message_body
 
     #### Start arg vars for send_alarm_notification() ####
     recipient_email_address = args['recipient_email_address']
@@ -58,41 +54,6 @@ try:
 except ImportError:
     flags = None
 
-SCOPES = 'https://www.googleapis.com/auth/gmail.modify'
-CLIENT_SECRET_FILE = 'C:\\Users\\nickk_000\\Desktop\\forRaz\\Pi_Room_Automation\\gmail\\client_secret_alarm_control.json'
-APPLICATION_NAME = 'Gmail API Python Quickstart'
-
-
-def get_credentials():
-    """Gets valid user credentials from storage.
-
-    If nothing has been stored, or if the stored credentials are invalid,
-    the OAuth2 flow is completed to obtain the new credentials.
-
-    Returns:
-        Credentials, the obtained credential.
-    """
-    home_dir = os.path.expanduser('~')
-    credential_dir = os.path.join(home_dir, '.credentials')
-    if not os.path.exists(credential_dir):
-        os.makedirs(credential_dir)
-    credential_path = os.path.join(credential_dir,
-                                   'gmail-python-quickstart.json')
-
-    store = oauth2client.file.Storage(credential_path)
-    credentials = store.get()
-    #Uncomment the following if you want to change permissions
-    #credentials.invalid = True
-    #End my addition
-    if not credentials or credentials.invalid:
-        flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
-        flow.user_agent = APPLICATION_NAME
-        if flags:
-            credentials = tools.run_flow(flow, store, flags)
-        else: # Needed only for compatibility with Python 2.6
-            credentials = tools.run(flow, store)
-        print('Storing credentials to ' + credential_path)
-    return credentials
 
 def send_git_pull_request():
     """Sends an email

@@ -4,10 +4,12 @@ import time
 import datetime
 import calendar
 import schedule
+import string
 
 import gmail.api.creds as creds
 import gmail.api.read_email as read_email
 import gmail.api.send_email as send_email
+from spotify.random_album import get_random_album
 
 
 ### Gmail interface ###
@@ -29,16 +31,13 @@ class GmailInterface:
         # Get email address of sender
         sender_full = message["From"]
         sender_address = re.search('<(.*)>', sender_full).group(1)
-        print("sender address = ", sender_address)
         return sender_address
 
-    def read_message(self, match, end_str):
-        """Gets the body of a message that comes before the 'end' identifier,
+    def read_message(self, match, end_delims):
+        """Gets the body of a message that comes before the 'end' delimiter,
         and marks the message as 'read'"""
         # Get message
         message = read_email.GetMimeMessage(self.service, "me", match['id'])
-
-        print("message:\n", message)
 
         # Mark message as read
         msgLabel = { 'removeLabelIds': ['UNREAD'] }
@@ -51,16 +50,17 @@ class GmailInterface:
             if part.get_content_type() == 'text/plain':
                 message_body = part.get_payload()
 
-        # Only get part of message before 'end' identifier
-        message_body = message_body.split(end_str, 1)
-        if len(message_body) != 2:
-            print("Error: bad formatting. End identifier '{}' not found".format(end_str))
+        # Search for end delimiter in message body using regex
+        end_delim = re.search(end_delims, message_body, flags=re.IGNORECASE)
+        if end_delim is None:
+            print("Error: bad formatting, end delimiter not found")
             return None
         else:
-            return message_body[0]
+            # Only get part of message before end delimiter
+            end_delim_str = end_delim.group(0)
+            return message_body.split(end_delim_str, maxsplit=1)[0]
 
     def send(self, to, subject, message_text):
-        print("to = ", to)
         sender = "snoozinforabruisin@gmail.com"
         message = send_email.CreateMessage(sender, to, subject, message_text)
         send_email.SendMessage(self.service, "me", message)
@@ -73,6 +73,7 @@ class AlbumRecs:
         self.gmail_iface = gmail_iface
         self.album_recs = {}
         random.seed(time.time())
+        self.END_DELIMS = '(enjoy \|)([—–-]|[—–-][—–-])(\|)'
 
     def get_shuffled_participants(self):
         participants = []
@@ -99,7 +100,7 @@ class AlbumRecs:
 
         self.gmail_iface.send(to, subject, message_text)
 
-    def add(self):
+    def add_from_gmail(self):
         # Find matching albumrec emails within the last 7 days
         matches = self.gmail_iface.get_matches("albumrec", 7)
 
@@ -107,9 +108,13 @@ class AlbumRecs:
         for match in matches:
             sender = self.gmail_iface.get_sender(match)
             if sender not in self.album_recs:
-                rec = self.gmail_iface.read_message(match, "Enjoy |--|")
+                rec = self.gmail_iface.read_message(match, self.END_DELIMS)
                 if rec:
-                    self.album_recs[sender] = rec
+                    rec_without_si = rec.split('?si=', maxsplit=1)[0]
+                    self.album_recs[sender] = rec_without_si
+    
+    def add_snoozin_rec(self, rec):
+        self.album_recs["snoozinforabruisin@gmail.com"] = rec
 
 
 ### Serving Function ###
@@ -121,25 +126,23 @@ def serve_album_recs():
     # Create album recs
     album_recs = AlbumRecs(gmail_iface) 
 
-    # Add album recs that have been recieved
-    album_recs.add()
-    
-    # Send the message
+    # Add album recs that have been recieved from gmail
+    album_recs.add_from_gmail()
+
+    # Add in snoozin's album pick
+    album_recs.add_snoozin_rec(get_random_album())
+
+    # Send the recs to those who participated
     album_recs.send()
-            
 
 ### Main ###
 
 def main():
-    serve_album_recs()
-    # schedule.every().monday.at("14:49").do(serve_album_recs)
+    schedule.every().sunday.at("20:00").do(serve_album_recs)
 
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
+    while True:
+        schedule.run_pending()
+        time.sleep(60)
 
 if __name__ == '__main__':
     main()
-
-# while True:
-#     album_rec = poll_for_albums()
